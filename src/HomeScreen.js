@@ -7,7 +7,7 @@ class HomeScreen extends Component {
   {
     firebase.auth().signOut();
   }
-
+// test
   render () {
   return (
       <View style={styles.mainView}>

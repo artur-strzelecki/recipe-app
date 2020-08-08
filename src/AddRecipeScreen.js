@@ -87,7 +87,7 @@ class AddRecipe extends Component {
     this.setState({error_content: ''});
     this.props.AddContent(text);
   }
-
+  // test
   Add()
   { 
     const{title,ingredients,content} = this.props;
@@ -133,7 +133,7 @@ class AddRecipe extends Component {
         <TouchableOpacity style={styles.touch} onPress={this.addPhoto} >
           {this.reloadPhoto()}
         </TouchableOpacity>
-        <Text style = {styles.addText}>Składniki</Text>  
+        <Text style = {styles.addText}>Składnikiii</Text>  
         <View style={styles.sklView}>
           <TextInput style = {styles.sklInput}
             value = {this.props.ingredients}
