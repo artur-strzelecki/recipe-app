@@ -136,6 +136,7 @@ class AddRecipe extends Component {
     const response = await fetch(photo);
     const blob = await response.blob();
     var ref = firebase.storage().ref().child(key); 
+
     return ref.put(blob);   
   }
 

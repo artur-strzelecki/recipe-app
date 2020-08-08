@@ -138,25 +138,6 @@ export const AddContent = (text) => {
     };
 };
 
-export const AddInsert = ({title,ingredients,content}) =>
-{
-    var myRef = firebase.database().ref('/foods').push();
-    var key = myRef.key;
-    const veryf = 0;
-      
-    var newData={
-        title: title,
-        ingredients: ingredients,
-        content : content,
-        veryf: veryf,
-        }
-    
-    myRef.set(newData);
-
-    return () => { key;
-    };
-};
-
 export const AddReset = () => {
     return {
         type: ADD_RESET,
