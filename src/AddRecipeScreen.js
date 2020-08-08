@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Button,TextInput,TouchableOpacity,ScrollView, I
 import {Input} from 'react-native-elements';
 import firebase from 'firebase';
 import { Ionicons } from '@expo/vector-icons'; 
-import {AddTitle,AddIngredients,AddContent,AddInsert,AddReset} from '../actions/actions';
+import {AddTitle,AddIngredients,AddContent,AddReset} from '../actions/actions';
 import {connect} from 'react-redux';
 import * as ImagePicker from 'expo-image-picker';
 import Constants from 'expo-constants';
@@ -52,8 +52,6 @@ class AddRecipe extends Component {
       if (!result.cancelled) {
         this.setState({ photo: result.uri });
       }
-
-      console.log(result);
     }
   };
 
@@ -87,7 +85,7 @@ class AddRecipe extends Component {
     this.setState({error_content: ''});
     this.props.AddContent(text);
   }
-  // test
+
   Add()
   { 
     const{title,ingredients,content} = this.props;
@@ -112,10 +110,33 @@ class AddRecipe extends Component {
 
     if ((error_title === '') && (error_ingredients ==='') && (error_content === '') && (error_photo==='')) 
     {
-      this.props.AddInsert({title,ingredients,content,photo});
+      this.addDataFire(title,ingredients,content,photo);
       this.props.AddReset();
       this.setState({photo: ''});
     }
+  }
+
+  addDataFire = async (title,ingredients,content,photo) =>
+  {
+    // add to database
+    var myRef = firebase.database().ref('/foods').push();
+    var key = myRef.key;
+    const veryf = 0;
+      
+    var newData={
+        title: title,
+        ingredients: ingredients,
+        content : content,
+        veryf: veryf,
+        }
+    
+    myRef.set(newData);
+
+    // add to storage 
+    const response = await fetch(photo);
+    const blob = await response.blob();
+    var ref = firebase.storage().ref().child(key); 
+    return ref.put(blob);   
   }
 
   render () {
@@ -221,4 +242,4 @@ addT: {
 
   });
   
-  export default connect(mapStateToProps, {AddTitle,AddIngredients,AddContent,AddInsert,AddReset}) (AddRecipe);
+  export default connect(mapStateToProps, {AddTitle,AddIngredients,AddContent,AddReset}) (AddRecipe);

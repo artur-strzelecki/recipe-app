@@ -138,11 +138,22 @@ export const AddContent = (text) => {
     };
 };
 
-export const AddInsert = ({title,ingredients,content,photo}) =>
+export const AddInsert = ({title,ingredients,content}) =>
 {
+    var myRef = firebase.database().ref('/foods').push();
+    var key = myRef.key;
     const veryf = 0;
-    return () => {
-        firebase.database().ref('/foods').push({title,ingredients,content,photo,veryf});
+      
+    var newData={
+        title: title,
+        ingredients: ingredients,
+        content : content,
+        veryf: veryf,
+        }
+    
+    myRef.set(newData);
+
+    return () => { key;
     };
 };
 
