@@ -10,6 +10,7 @@ import HomeScreen from './HomeScreen';
 import ProfileScreen from './ProfileScreen';
 import RecipeScreen from './RecipeScreen';
 import AddRecipe from './AddRecipeScreen';
+import RecipeList from './ReicpeListScreen';
 
 
 const HomeStack = createStackNavigator();
@@ -45,7 +46,13 @@ function StackRecipeScreen({navigation: {navigate} }) {
           ),   
           headerRightContainerStyle: { margin: Platform.OS === 'android' ? 15 : 9 },      
         }}/>
-          <RecipeStack.Screen name="Dodaj" component={AddRecipe} options={{
+      <RecipeStack.Screen name="Dodaj" component={AddRecipe} options={{
+          headerStyle: { backgroundColor: '#f5f6fa', height: Platform.OS === 'ios' ? 80 : 59 },
+          headerTitleStyle: { fontSize: 18, },
+          headerTitleAlign: 'center',  
+          headerTintColor: '#485460',      
+        }}/>
+      <RecipeStack.Screen name="Lista przepisów" component={RecipeList} options={{
           headerStyle: { backgroundColor: '#f5f6fa', height: Platform.OS === 'ios' ? 80 : 59 },
           headerTitleStyle: { fontSize: 18, },
           headerTitleAlign: 'center',  

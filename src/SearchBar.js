@@ -3,7 +3,8 @@ import { StyleSheet, TextInput, View, Text,Platform} from 'react-native';
 import { FontAwesome,Octicons } from '@expo/vector-icons'; 
 import {Input,SearchBar} from 'react-native-elements';
 import { connect } from 'react-redux';
-import { searchChange, resertSearch} from '../actions/actions';
+import { searchChange} from '../actions/actions';
+import { NavigationContext } from '@react-navigation/native';
 
 const mapStateToProps = state => {
     return {
@@ -12,11 +13,16 @@ const mapStateToProps = state => {
 };
 
 class Search extends Component {
+    static contextType = NavigationContext;
     state = {focus: false};
 
-    clearSearch()
-    {        
-        this.props.resertSearch();
+    onEndSearch()
+    {
+        if (this.props.search !== '')
+        {
+            const navigation = this.context;
+            navigation.navigate('Lista przepisów');
+        }
     }
 
     onChangeSearch(text)
@@ -30,6 +36,7 @@ class Search extends Component {
                 <FontAwesome style={styles.icon} name="search"/>
                 <TextInput style={styles.inputText}
                     placeholder = "Szukaj"
+                    onSubmitEditing = {() => this.onEndSearch()}
                     onChangeText ={this.onChangeSearch.bind(this)}
                     value = {this.props.search} 
                     //onFocus={()=>{this.setState({focus:true})}}
@@ -46,7 +53,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#E2E2E4',
         height: 50,
         borderRadius: 5,
-        marginHorizontal: 7,
+        marginHorizontal: 17,
         marginTop: 8,
         marginBottom: 5,
         flexDirection: 'row'
@@ -70,4 +77,4 @@ const styles = StyleSheet.create({
   });
 
 
-  export default connect(mapStateToProps, {searchChange,resertSearch}) (Search);
+  export default connect(mapStateToProps, {searchChange}) (Search);

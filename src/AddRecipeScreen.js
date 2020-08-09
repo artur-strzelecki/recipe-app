@@ -138,7 +138,7 @@ class AddRecipe extends Component {
         title: title,
         ingredients: ingredients,
         content : content,
-        veryf: veryf,
+        veryf: veryf, 
         url: downloadUrl,
         }
     
@@ -148,7 +148,7 @@ class AddRecipe extends Component {
       alert("Nie udało się dodać przepisu. Spróbuj ponowanie poźniej");
     })
 
-    return null; // ref.put(blob);   
+    return null; 
   }
 
   render () {

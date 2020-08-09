@@ -3,78 +3,11 @@ import { StyleSheet, Text, View, Image, Button, ScrollView, FlatList, TouchableO
 import firebase from 'firebase';
 import Spinner from '../components/Spinner';
 import SearchBar from './SearchBar';
-
-export const DATA = [
-  {
-    id: "1",
-    title: "pizza",
-    img: require('../photo/pizza.jpg'), 
-  },
-  {
-    id: "2",
-    title: "pasta",
-    img: require('../photo/pizza.jpg'), 
-  },
-  {
-    id: "3",
-    title: "burger",
-    img: require('../photo/pizza.jpg'), 
-  },
-  {
-    id: "4",
-    title: "chinese",
-    img: require('../photo/pizza.jpg'),  
-  },
-  {
-    id: "5",
-    title: "italy",
-    img: require('../photo/pizza.jpg'), 
-  },
-  {
-    id: "6",
-    title: "italy",
-    img: require('../photo/pizza.jpg'), 
-  },
-  {
-    id: "7",
-    title: "italy",
-    img: require('../photo/pizza.jpg'), 
-  },
-  {
-    id: "8",
-    title: "italy",
-    img: require('../photo/pizza.jpg'), 
-  },
-  {
-    id: "9",
-    title: "italy",
-    img: require('../photo/pizza.jpg'), 
-  },
-  {
-    id: "10",
-    title: "italy",
-    img: require('../photo/pizza.jpg'), 
-  },
-  {
-    id: "11",
-    title: "italy",
-    img: require('../photo/pizza.jpg'), 
-  },
-  {
-    id: "12",
-    title: "italy",
-    img: require('../photo/pizza.jpg'), 
-  },
-];
+import {DATA} from '../components/categories';
 
 class RecipeScreen extends Component {
 
-  state = {loading: true, search: ''};
-
-  updateSearch = (search) => {
-    const lowerText = search.toLowerCase();
-    this.setState({ search });
-  };
+  state = {loading: true};
 
   _renderItem(item)
   {
@@ -108,8 +41,9 @@ class RecipeScreen extends Component {
   render () {
     return (
       <View style={styles.mainView}>
+          <SearchBar />
         <FlatList 
-        ListHeaderComponent = {this.headerComponent()}
+      //  ListHeaderComponent = {this.headerComponent()}
          // ListFooterComponent = {this.footercomponent}
           data = {DATA}
           showsHorizontalScrollIndicator={false}
@@ -127,9 +61,8 @@ class RecipeScreen extends Component {
   const styles = StyleSheet.create({
     mainView: {
         flex: 1,
-        backgroundColor: '#f5f6fa',
+        //backgroundColor: '#f5f6fa',
         alignItems: 'center',
-
     },  
     touch: {
       marginLeft: 5,
@@ -141,9 +74,8 @@ class RecipeScreen extends Component {
     alignItems: 'center',
     alignContent: 'center',
   },  
-  searchBar: {
-    marginTop: 8,
-    borderRadius: 10,
+  searchBarStyle: {
+    flex: 1,
   },    
   });  
 export default RecipeScreen;
