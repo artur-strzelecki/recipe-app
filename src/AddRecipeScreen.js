@@ -118,26 +118,37 @@ class AddRecipe extends Component {
 
   addDataFire = async (title,ingredients,content,photo) =>
   {
-    // add to database
-    var myRef = firebase.database().ref('/foods').push();
-    var key = myRef.key;
+    // catch key push
+    let myRef = firebase.database().ref('/foods').push();
+    let key = myRef.key;
     const veryf = 0;
+    const contentT = {contentType:'image/jpg'};
       
-    var newData={
+    // add to storage 
+    const response = await fetch(photo);
+    const blob = await response.blob();
+    var ref = firebase.storage().ref().child(key);
+
+    await ref.put(blob,contentT)
+    .then (snapshot => {
+       return snapshot.ref.getDownloadURL(); 
+    }) 
+    .then (downloadUrl => {
+      let newData={
         title: title,
         ingredients: ingredients,
         content : content,
         veryf: veryf,
+        url: downloadUrl,
         }
     
-    myRef.set(newData);
+        myRef.set(newData);
+    })
+    .catch(error => {
+      alert("Nie udało się dodać przepisu. Spróbuj ponowanie poźniej");
+    })
 
-    // add to storage 
-    const response = await fetch(photo);
-    const blob = await response.blob();
-    var ref = firebase.storage().ref().child(key); 
-
-    return ref.put(blob);   
+    return null; // ref.put(blob);   
   }
 
   render () {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, Keyboard,ScrollView } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity, Keyboard,ScrollView,SafeAreaView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import firebase from 'firebase';
 import Spinner from '../components/Spinner';
@@ -82,8 +82,8 @@ class LoginScreen extends Component  {
 
     render() {
     return (
-        <View style = {styles.mainView} >
-            <MaterialCommunityIcons style = {styles.icon} name="chef-hat" size = {80} color = {'#636e72'} />
+        <ScrollView style = {styles.mainView} >
+            <MaterialCommunityIcons style = {styles.icon} name="chef-hat" size = {120} color = {'#636e72'} />
             <View style = {styles.authView}>
                 <Text style = {styles.authText}>Email</Text>
                 <TextInput style = {styles.authTextInput}
@@ -107,7 +107,7 @@ class LoginScreen extends Component  {
                 {this.signInButton()}
                 {this.createAccount()}
             </View> 
-        </View>
+        </ScrollView>
     );
     }
 }
@@ -116,7 +116,6 @@ const styles = StyleSheet.create({
     mainView: {
         flex: 1,
         backgroundColor: '#f5f6fa',
-        alignItems: 'center',
     },  
     authView: {
         flexDirection: 'row',
@@ -142,7 +141,8 @@ const styles = StyleSheet.create({
     },
     icon: {
         paddingTop: 50,
-        paddingBottom: 20,
+        paddingBottom: 30,
+        alignSelf: 'center'
     },
     signInText: {
         marginTop: 10,

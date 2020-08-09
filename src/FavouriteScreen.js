@@ -1,7 +1,8 @@
 import React,{Component} from 'react';
-import { StyleSheet, Text, View, TextInput,TouchableOpacity,FlatList, Image } from 'react-native';
+import { StyleSheet, Text, View, TextInput,TouchableOpacity,FlatList } from 'react-native';
 import firebase from 'firebase';
 import Spinner from '../components/Spinner';
+import {Image} from 'react-native-elements';
 
 
 class Favourite extends Component {
@@ -9,8 +10,7 @@ class Favourite extends Component {
     super(props);
     this.state={ 
     foods:[],
-    imageUrl: null,
-    loading: 1,
+    loaded: false,
     }}
 
   
@@ -21,52 +21,35 @@ class Favourite extends Component {
    downloadData = async () =>
    {
        firebase.database().ref('/foods').on('value', (snapshot) =>{
-          var li = [];
+          let li = [];
           snapshot.forEach((snap) => {
-          var item = snap.val();
+          let item = snap.val();
           item.key = snap.key;
-          item.url = '';
           li.push(item);
       })
-      this.setState({foods:li, loading: 2});
-      if (this.state.foods != [] && this.state.loading === 2)
-      {
-       this.state.foods.forEach(async (item) => {
-          var item;
-          var imageRef = firebase.storage().ref(item.key);
-          await imageRef.getDownloadURL().then((url) => {
-            this.setState({ imageUrl: url })
-          })
-          item.url = this.state.imageUrl;
-          this.setState({loading: 3});    
-        })
-      }
+      this.setState({foods:li, loaded: true});
     })
   }
 
   rednerScreen()
   {
-    if (this.state.loading !== 3)
+    if (this.state.loaded)
     {
-      return <Spinner size = 'large'/>;  
-    }
-    return (<FlatList 
+      return (  <FlatList 
         data = {this.state.foods}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         numColumns={2}
         renderItem = {({item})=> this._renderItem({item})}
         keyExtractor = {(item) => item.key}
-      />
-    )
+      /> )
+    }
+    return <Spinner size='large' />
   }
    _renderItem ({item})  { 
-     console.log(item.url);
     return (
       <TouchableOpacity>
-        <Image 
-          style = {{width:180,height:140,borderRadius:15}}
-          source = {{uri: "https://firebasestorage.googleapis.com/v0/b/recipe-app-121b3.appspot.com/o/-MEEAu6QlfEbWXuw9Qfq?alt=media&token=e4f24d7f-b9da-42a8-89ef-7e5b136d8e11"}} /> 
+      <Image style={{height: 200, width: 200,resizeMode: 'contain'}} source={{uri:item.url}}/>
         <Text> {item.title}</Text>
       </TouchableOpacity>
       )
