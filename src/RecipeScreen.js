@@ -4,17 +4,29 @@ import firebase from 'firebase';
 import Spinner from '../components/Spinner';
 import SearchBar from './SearchBar';
 import {DATA} from '../components/categories';
+import { NavigationContext } from '@react-navigation/native';
+import { connect } from 'react-redux';
+import { searchChange, resertSearch } from '../actions/actions';
 
 class RecipeScreen extends Component {
+  static contextType = NavigationContext;
 
   state = {loading: true};
+
+  onPressCateg(item)
+  {
+    this.props.resertSearch();
+    this.props.searchChange(item.title);
+    const navigation = this.context;
+    navigation.navigate('Lista przepisów');
+  }
 
   _renderItem(item)
   {
     return(
-      <TouchableOpacity style = {styles.touch} >
+      <TouchableOpacity style = {styles.touch} onPress = {() => this.onPressCateg(item)} >
         <Image 
-          style = {{width:180,height:140,borderRadius:15}}
+          style = {{width:180,height:140,borderRadius:15,}}
           source = {item.img} /> 
         <Text> {item.title}</Text>
       </TouchableOpacity>
@@ -78,4 +90,4 @@ class RecipeScreen extends Component {
     flex: 1,
   },    
   });  
-export default RecipeScreen;
+  export default connect(null,{resertSearch,searchChange}) (RecipeScreen);

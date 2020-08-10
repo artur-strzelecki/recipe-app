@@ -162,11 +162,12 @@ class AddRecipe extends Component {
           />
           <Text style={styles.error}>{this.state.error_title}</Text>
         </View>
-        <Text style = {styles.addText}>Zdjęcie</Text>  
+        <Text style = {styles.addText}>Zadjęcie</Text>  
         <TouchableOpacity style={styles.touch} onPress={this.addPhoto} >
           {this.reloadPhoto()}
         </TouchableOpacity>
-        <Text style = {styles.addText}>Składnikiii</Text>  
+        <Text style = {styles.addText}>Kategoria</Text>
+        <Text style = {styles.addText}>Składniki</Text>  
         <View style={styles.sklView}>
           <TextInput style = {styles.sklInput}
             value = {this.props.ingredients}

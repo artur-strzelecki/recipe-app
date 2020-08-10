@@ -10,12 +10,12 @@ class Favourite extends Component {
     super(props);
     this.state={ 
     foods:[],
-    loaded: false,
+    loaded: true,
     }}
 
   
     componentDidMount () {
-      this.downloadData();
+    //  this.downloadData();
    }
 
    downloadData = async () =>
@@ -35,6 +35,11 @@ class Favourite extends Component {
   {
     if (this.state.loaded)
     {
+      console.log(this.state.foods);
+      if (this.state.foods.length === 0)
+      {
+        return <Text> Brak ulubionych przepisów</Text>
+      }
       return (  <FlatList 
         data = {this.state.foods}
         showsHorizontalScrollIndicator={false}

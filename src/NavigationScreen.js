@@ -31,7 +31,7 @@ function StackHomeScreen() {
 
 const RecipeStack = createStackNavigator();
 
-function StackRecipeScreen({navigation: {navigate} }) {
+function StackRecipeScreen({navigation: {navigate}}) {
   return (
     <RecipeStack.Navigator initialRouteName="Przepisy">
       <RecipeStack.Screen name="Przepisy" component={RecipeScreen} options={{

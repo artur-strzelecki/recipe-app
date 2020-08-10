@@ -4,6 +4,7 @@ import firebase from 'firebase';
 import Spinner from '../components/Spinner';
 import { resertSearch} from '../actions/actions';
 import { connect } from 'react-redux';
+import Search from './SearchBar';
 
 const mapStateToProps = state => {
     return {
@@ -38,17 +39,21 @@ class RecipeList extends Component {
 
   rednerScreen()
   {
-    this.props.resertSearch(); // reset value search bar
     if (this.state.loaded)
     {
-      return (  <FlatList 
-        data = {this.state.foods}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        numColumns={2}
-        renderItem = {({item})=> this._renderItem({item})}
-        keyExtractor = {(item) => item.key}
-      /> )
+      return (
+        <View>
+          <Search />
+          <FlatList 
+            data = {this.state.foods}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            numColumns={2}
+            renderItem = {({item})=> this._renderItem({item})}
+            keyExtractor = {(item) => item.key}
+          /> 
+        </View> 
+      )
     }
     return <Spinner size='large' />
   }
