@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, Keyboard } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import Spinner from '../components/Spinner';
 import { connect } from 'react-redux';

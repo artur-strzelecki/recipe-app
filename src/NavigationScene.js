@@ -1,6 +1,6 @@
 // nawigacja do logowania i tworzenia konta
 import React from 'react';
-import {StyleSheet, Platform} from 'react-native';
+import {Platform} from 'react-native';
 import CreateAccountScreen from './CreateAccountScreen';
 import LoginScreen from './LoginScreen';
 import { createStackNavigator } from '@react-navigation/stack';

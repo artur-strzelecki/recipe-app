@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import { StyleSheet, Text, View, TextInput,TouchableOpacity,FlatList } from 'react-native';
+import { StyleSheet, Text, View,TouchableOpacity,FlatList } from 'react-native';
 import firebase from 'firebase';
 import Spinner from '../components/Spinner';
 import {Image} from 'react-native-elements';
@@ -35,7 +35,6 @@ class Favourite extends Component {
   {
     if (this.state.loaded)
     {
-      console.log(this.state.foods);
       if (this.state.foods.length === 0)
       {
         return <Text> Brak ulubionych przepisów</Text>
@@ -62,7 +61,7 @@ class Favourite extends Component {
   
   render() {
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1,backgroundColor: '#f5f6fa',}}>
         {this.rednerScreen()}
       </View>
     );

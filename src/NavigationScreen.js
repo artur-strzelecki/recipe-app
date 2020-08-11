@@ -1,9 +1,9 @@
 // nawigacja po zalogowaniu
 import React from 'react';
-import { StyleSheet, Text, Platform, View,TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, Platform,TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator,HeaderBackButton  } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons'; 
 import Favourite from './FavouriteScreen';
 import HomeScreen from './HomeScreen';

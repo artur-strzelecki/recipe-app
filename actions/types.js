@@ -26,3 +26,5 @@ export const ADD_TITLE = 'add_title';
 export const ADD_INGREDIENTS = 'add_ingredients';
 export const ADD_CONTENT = 'add_content';
 export const ADD_RESET = 'add_reset';
+export const ADD_CATEGORIES = 'add_categories';
+export const ADD_PHOTO = 'add_photo';

@@ -16,7 +16,9 @@ import {
     ADD_TITLE,
     ADD_INGREDIENTS,
     ADD_CONTENT,
-    ADD_RESET } from './types';
+    ADD_RESET,
+    ADD_CATEGORIES,
+    ADD_PHOTO } from './types';
 import firebase from 'firebase';
 import {Keyboard } from 'react-native';
 
@@ -134,6 +136,20 @@ export const AddIngredients = (text) => {
 export const AddContent = (text) => {
     return {
         type: ADD_CONTENT,
+        payload: text,
+    };
+};
+
+export const AddCategories = (text) => {
+    return {
+        type: ADD_CATEGORIES,
+        payload: text,
+    };
+};
+
+export const AddPhoto = (text) => {
+    return {
+        type: ADD_PHOTO,
         payload: text,
     };
 };

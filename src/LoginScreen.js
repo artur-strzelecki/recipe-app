@@ -1,11 +1,9 @@
 import React, {Component} from 'react';
-import { StyleSheet, TextInput, View, Text, TouchableOpacity, Keyboard,ScrollView,SafeAreaView } from 'react-native';
+import { StyleSheet, TextInput, View, Text, TouchableOpacity,ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
-import firebase from 'firebase';
 import Spinner from '../components/Spinner';
 import { connect } from 'react-redux';
 import { emailChanged, passwordChanged, loginUser, resetVar,createResetVar } from '../actions/actions';
-import { NavigationContext } from '@react-navigation/native';
 
 
 const mapStateToProps = state => {
@@ -19,8 +17,7 @@ const mapStateToProps = state => {
 
 
 class LoginScreen extends Component  {
-    static contextType = NavigationContext;
-    state = {keyboardStatus: false};  
+
     onChangeEmail(text)
     {
         this.props.emailChanged(text);
@@ -39,10 +36,9 @@ class LoginScreen extends Component  {
 
     onCreateAccount()
     {
-        const navigation = this.context;
         this.props.resetVar(); // reset state
         this.props.createResetVar(); // reset state (areate account)
-        navigation.navigate('Stwórz konto');
+        this.props.navigation.navigate('Stwórz konto');
     }
     createAccount()
     {

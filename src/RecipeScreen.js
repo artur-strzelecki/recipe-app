@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, Button, ScrollView, FlatList, TouchableOpacity} from 'react-native';
-import firebase from 'firebase';
+import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity} from 'react-native';
 import Spinner from '../components/Spinner';
 import SearchBar from './SearchBar';
 import {DATA} from '../components/categories';
@@ -18,7 +17,7 @@ class RecipeScreen extends Component {
     this.props.resertSearch();
     this.props.searchChange(item.title);
     const navigation = this.context;
-    navigation.navigate('Lista przepisów');
+    navigation.navigate('Lista przepisów', {type: 1, id: item.id});
   }
 
   _renderItem(item)

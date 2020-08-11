@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-import { StyleSheet, TextInput, View, Text,Platform} from 'react-native';
-import { FontAwesome,Octicons } from '@expo/vector-icons'; 
-import {Input,SearchBar} from 'react-native-elements';
+import { StyleSheet, TextInput, View} from 'react-native';
+import { FontAwesome } from '@expo/vector-icons'; 
 import { connect } from 'react-redux';
-import { searchChange} from '../actions/actions';
+import { searchChange, resertSearch} from '../actions/actions';
 import { NavigationContext } from '@react-navigation/native';
 
 const mapStateToProps = state => {
@@ -21,13 +20,18 @@ class Search extends Component {
         if (this.props.search !== '')
         {
             const navigation = this.context;
-            navigation.navigate('Lista przepisów');
+            navigation.navigate('Lista przepisów',{type: 1, id: 0});
         }
     }
 
     onChangeSearch(text)
     {
         this.props.searchChange(text);
+    }
+    
+    onFocus()
+    {
+        this.props.resertSearch();
     }
 
     render(){
@@ -39,7 +43,7 @@ class Search extends Component {
                     onSubmitEditing = {() => this.onEndSearch()}
                     onChangeText ={this.onChangeSearch.bind(this)}
                     value = {this.props.search} 
-                    //onFocus={()=>{this.setState({focus:true})}}
+                    onFocus={()=>{this.onFocus()}}
                    // onBlur={()=>{this.clearSearch()}}
                     />
             </View>
@@ -77,4 +81,4 @@ const styles = StyleSheet.create({
   });
 
 
-  export default connect(mapStateToProps, {searchChange}) (Search);
+  export default connect(mapStateToProps, {searchChange,resertSearch}) (Search);

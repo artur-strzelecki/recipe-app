@@ -1,8 +1,7 @@
 import React,{Component} from 'react';
-import { StyleSheet, Text, View, TextInput,TouchableOpacity,FlatList, Image } from 'react-native';
+import { StyleSheet, Text, View,TouchableOpacity,FlatList, Image } from 'react-native';
 import firebase from 'firebase';
 import Spinner from '../components/Spinner';
-import { resertSearch} from '../actions/actions';
 import { connect } from 'react-redux';
 import Search from './SearchBar';
 
@@ -21,12 +20,16 @@ class RecipeList extends Component {
         }}
 
     componentDidMount () {
-      this.downloadData();
+      this.downloadData();      
    }
 
    downloadData = async () =>
    {
-       firebase.database().ref('/foods').on('value', (snapshot) =>{
+     // type 1 click on categories; type 2 search bar
+      const type = this.props.route.params.type;
+      const idCateg = this.props.route.params.id;
+
+      firebase.database().ref('/foods').on('value', (snapshot) =>{
           let li = [];
           snapshot.forEach((snap) => {
           let item = snap.val();
@@ -42,8 +45,6 @@ class RecipeList extends Component {
     if (this.state.loaded)
     {
       return (
-        <View>
-          <Search />
           <FlatList 
             data = {this.state.foods}
             showsHorizontalScrollIndicator={false}
@@ -52,15 +53,14 @@ class RecipeList extends Component {
             renderItem = {({item})=> this._renderItem({item})}
             keyExtractor = {(item) => item.key}
           /> 
-        </View> 
       )
     }
     return <Spinner size='large' />
   }
    _renderItem ({item})  { 
     return (
-      <TouchableOpacity>
-      <Image style={{height: 200, width: 200,resizeMode: 'contain'}} source={{uri:item.url}}/>
+      <TouchableOpacity style = {styles.TouchList}>
+      <Image style={{height: 140, width: 180, borderRadius: 8,}} source={{uri:item.url}}/>
         <Text> {item.title}</Text>
       </TouchableOpacity>
       )
@@ -68,7 +68,8 @@ class RecipeList extends Component {
   
   render() {
     return (
-      <View style={{flex: 1}}>
+      <View style={styles.mainView}>
+        <Search />
         {this.rednerScreen()}
       </View>
     );
@@ -77,15 +78,18 @@ class RecipeList extends Component {
 
   
 const styles = StyleSheet.create({
-  input: {
-      borderColor: 'black',
-      borderWidth: 1,
-      margin: 15,
-  },
   mainView: {
     flex: 1,
     backgroundColor: '#f5f6fa',
+    alignItems: 'center',
+  },
+  TouchList: {
+    marginHorizontal: 5,
+    marginBottom: 5,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#D6D9E8',
   }
 });
 
-export default connect(mapStateToProps,{resertSearch}) (RecipeList);
+export default connect(mapStateToProps,null) (RecipeList);
