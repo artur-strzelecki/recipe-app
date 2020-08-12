@@ -114,7 +114,6 @@ class AddRecipe extends Component {
     if ((title !== '') && (ingredients !== '') && (content !== '') && (photo !== ''))
     {
       this.addDataFire(title,ingredients,content,photo,categories);
-      this.props.AddReset();
     }
   }
 
@@ -128,7 +127,11 @@ class AddRecipe extends Component {
     // add to storage 
     const response = await fetch(photo);
     const blob = await response.blob();
-    var ref = firebase.storage().ref().child(key);
+    let ref = firebase.storage().ref().child(key);
+    let user = firebase.auth().currentUser.uid;
+    let date = new Date();
+    let timestamp = date.getTime();
+    console.log(user,timestamp);
 
     await ref.put(blob,contentT)
     .then (snapshot => {
@@ -141,8 +144,10 @@ class AddRecipe extends Component {
         content : content,
         category: categories,
         url: downloadUrl,
+        user: user,
+        createdAt: timestamp,
         }
-    
+        this.props.AddReset(); // reset values
         myRef.set(newData);
     })
     .catch(error => {

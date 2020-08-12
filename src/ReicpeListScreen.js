@@ -4,6 +4,7 @@ import firebase from 'firebase';
 import Spinner from '../components/Spinner';
 import { connect } from 'react-redux';
 import Search from './SearchBar';
+import { NavigationContext } from '@react-navigation/native';
 
 const mapStateToProps = state => {
     return {
@@ -19,8 +20,10 @@ class RecipeList extends Component {
         loaded: false,
         }}
 
+    static contextType = NavigationContext;
+
     componentDidMount () {
-      this.downloadData();      
+      this.downloadData();   
    }
 
    downloadData = async () =>
@@ -57,11 +60,19 @@ class RecipeList extends Component {
     }
     return <Spinner size='large' />
   }
+
+  goToRecipe(item)
+  {
+    const navigation = this.context;
+    navigation.navigate('Przepis',{item: item});
+
+  }
+
    _renderItem ({item})  { 
     return (
-      <TouchableOpacity style = {styles.TouchList}>
+      <TouchableOpacity style = {styles.TouchList} onPress={() => this.goToRecipe(item)}>
       <Image style={{height: 140, width: 180, borderRadius: 8,}} source={{uri:item.url}}/>
-        <Text> {item.title}</Text>
+        <Text style={styles.textTitle}> {item.title}</Text>
       </TouchableOpacity>
       )
   }
@@ -89,6 +100,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 2,
     borderColor: '#D6D9E8',
+    alignItems: 'center'
+  },
+  textTitle: {
+    fontFamily: 'sans-serif-light',
+    fontSize: 17,
   }
 });
 

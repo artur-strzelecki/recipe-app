@@ -3,14 +3,15 @@ import React from 'react';
 import { StyleSheet, Text, Platform,TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator,HeaderBackButton } from '@react-navigation/stack';
 import { MaterialCommunityIcons,Ionicons } from '@expo/vector-icons'; 
 import Favourite from './FavouriteScreen';
 import HomeScreen from './HomeScreen';
 import ProfileScreen from './ProfileScreen';
-import RecipeScreen from './RecipeScreen';
+import CategoriesScreen from './CategoriesScreen';
 import AddRecipe from './AddRecipeScreen';
 import RecipeList from './ReicpeListScreen';
+import RecipeScreen from './RecipeScreen';
 
 
 const HomeStack = createStackNavigator();
@@ -28,13 +29,12 @@ function StackHomeScreen() {
   );
 }
 
-
 const RecipeStack = createStackNavigator();
 
 function StackRecipeScreen({navigation: {navigate}}) {
   return (
     <RecipeStack.Navigator initialRouteName="Przepisy">
-      <RecipeStack.Screen name="Przepisy" component={RecipeScreen} options={{
+      <RecipeStack.Screen name="Przepisy" component={CategoriesScreen} options={{
           headerStyle: { backgroundColor: '#f5f6fa', height: Platform.OS === 'ios' ? 90 : 59 },
           headerTitleStyle: { fontSize: 18, },
           headerTitleAlign: 'center',  
@@ -57,7 +57,12 @@ function StackRecipeScreen({navigation: {navigate}}) {
           headerTitleStyle: { fontSize: 18, },
           headerTitleAlign: 'center',  
           headerTintColor: '#485460',      
-        }}/>
+        }}/>    
+      <RecipeStack.Screen name="Przepis" component={RecipeScreen} options={{
+        headerTransparent: true,
+        headerTitle: false,
+        }}/>            
+
     </RecipeStack.Navigator>
   );
 }

@@ -1,92 +1,72 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity} from 'react-native';
-import Spinner from '../components/Spinner';
-import SearchBar from './SearchBar';
-import {DATA} from '../components/categories';
+import React, {Component, useRef} from 'react';
+import { StyleSheet, Text,TouchableOpacity, View,Dimensions, Image } from 'react-native';
+import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import { NavigationContext } from '@react-navigation/native';
-import { connect } from 'react-redux';
-import { searchChange, resertSearch } from '../actions/actions';
+import * as Animatable  from 'react-native-animatable';
+import Spinner from '../components/Spinner';
+import {
+    useFonts,
+    Montserrat_300Light,
+  } from '@expo-google-fonts/montserrat';
 
-class RecipeScreen extends Component {
-  static contextType = NavigationContext;
 
-  state = {loading: true};
-
-  onPressCateg(item)
-  {
-    this.props.resertSearch();
-    this.props.searchChange(item.title);
-    const navigation = this.context;
-    navigation.navigate('Lista przepisów', {type: 1, id: item.id});
-  }
-
-  _renderItem(item)
-  {
-    return(
-      <TouchableOpacity style = {styles.touch} onPress = {() => this.onPressCateg(item)} >
-        <Image 
-          style = {{width:180,height:140,borderRadius:15,}}
-          source = {item.img} /> 
-        <Text> {item.title}</Text>
-      </TouchableOpacity>
-    )
-  }
-
-  footercomponent = () =>
-  {
-    if (!this.state.loading) return null;
-    return (
-      <View style={styles.loadingView} >
-        <Spinner size='large' />
-      </View>
-    );
-  }
-
-  headerComponent()
-  {
-    return (
-        <SearchBar />
-    );
-  }
-
-  render () {
-    return (
-      <View style={styles.mainView}>
-          <SearchBar />
-        <FlatList 
-      //  ListHeaderComponent = {this.headerComponent()}
-         // ListFooterComponent = {this.footercomponent}
-          data = {DATA}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          numColumns={2}
-          renderItem = {({item})=> this._renderItem(item)}
-          keyExtractor = {(item) => item.id}
-        />
-      </View>
-    );
+const RecipeScreen = ({route}) => {
+    let [fontsLoaded] = useFonts({
+        Montserrat_300Light ,
+      });
+    const item = route.params.item;
+    const titleRef = useRef(null);
+    if (!fontsLoaded)
+    {
+        return <Spinner size='large' />
     }
-  }
- 
-  
-  const styles = StyleSheet.create({
-    mainView: {
+    return (
+        <HeaderImageScrollView
+        maxHeight={220}
+        minHeight={80}
+        renderForeground={() => (
+            <View style={styles.titleView}>
+                <Text style={styles.titleText}>{item.title}</Text>
+            </View>)}
+
+        renderFixedForeground={() => (
+            <Animatable.View style={styles.animatedTitle} ref={titleRef}>
+                <Text style={styles.titleText}>{item.title}</Text>
+            </Animatable.View>)}  
+
+        renderHeader={() => (<Image source={{uri: item.url}} style={{ height: 220, width: Dimensions.get('window').width }} />)}
+      >
+        <TriggeringView style={{height: 1000}}
+            onBeginHidden={() => titleRef.current.fadeInUp(200)}
+            onDisplay={() => titleRef.current.fadeOut(100)}
+        >
+            <Text>Scroll Me!</Text>
+        </TriggeringView>
+      </HeaderImageScrollView>
+    );
+}
+
+const styles = StyleSheet.create({
+    titleView: {
         flex: 1,
-        //backgroundColor: '#f5f6fa',
+        alignSelf: 'stretch',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    animatedTitle: {
+        height: 80,
+        justifyContent: 'center',
         alignItems: 'center',
-    },  
-    touch: {
-      marginLeft: 5,
-      padding: 5,
-      alignItems: 'center'
-  }, 
-  loadingView: {
-    flex: 1,
-    alignItems: 'center',
-    alignContent: 'center',
-  },  
-  searchBarStyle: {
-    flex: 1,
-  },    
-  });  
-  export default connect(null,{resertSearch,searchChange}) (RecipeScreen);
+        paddingTop: 16,
+        opacity: 0,
+    },
+    titleText: {
+        color: 'white',
+        fontSize: 30,
+        backgroundColor: 'transparent',
+        fontFamily: 'Montserrat_300Light',
+    }
+  });
+
+export default RecipeScreen;
+
