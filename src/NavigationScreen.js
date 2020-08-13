@@ -31,7 +31,7 @@ function StackHomeScreen() {
 
 const RecipeStack = createStackNavigator();
 
-function StackRecipeScreen({navigation: {navigate}}) {
+function StackRecipeScreen({navigation: {navigate}, route}) {
   return (
     <RecipeStack.Navigator initialRouteName="Przepisy">
       <RecipeStack.Screen name="Przepisy" component={CategoriesScreen} options={{
@@ -52,12 +52,13 @@ function StackRecipeScreen({navigation: {navigate}}) {
           headerTitleAlign: 'center',  
           headerTintColor: '#485460',      
         }}/>
-      <RecipeStack.Screen name="Lista przepisów" component={RecipeList} options={{
-          headerStyle: { backgroundColor: '#f5f6fa', height: Platform.OS === 'ios' ? 80 : 59 },
-          headerTitleStyle: { fontSize: 18, },
-          headerTitleAlign: 'center',  
-          headerTintColor: '#485460',      
-        }}/>    
+      <RecipeStack.Screen name="Lista przepisów" component={RecipeList} options={({ route }) => ({ 
+        title: route.params.title,
+        headerStyle: { backgroundColor: '#f5f6fa', height: Platform.OS === 'ios' ? 80 : 59 },
+        headerTitleStyle: { fontSize: 18, },
+        headerTitleAlign: 'center',  
+        headerTintColor: '#485460',  
+        })}/>    
       <RecipeStack.Screen name="Przepis" component={RecipeScreen} options={{
         headerTransparent: true,
         headerTitle: false,

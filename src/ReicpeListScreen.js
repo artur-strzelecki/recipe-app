@@ -1,15 +1,21 @@
 import React,{Component} from 'react';
-import { StyleSheet, Text, View,TouchableOpacity,FlatList, Image } from 'react-native';
+import { StyleSheet, Text, View,TouchableOpacity,FlatList, Image,ScrollView, SafeAreaView } from 'react-native';
 import firebase from 'firebase';
 import Spinner from '../components/Spinner';
 import { connect } from 'react-redux';
-import Search from './SearchBar';
-import { NavigationContext } from '@react-navigation/native';
+import {
+  Montserrat_300Light,
+} from '@expo-google-fonts/montserrat';
+import * as Font from 'expo-font';
 
 const mapStateToProps = state => {
     return {
         search: state.SearchReducer.search,
     };
+};
+
+let customFonts = {
+  Montserrat_300Light
 };
 
 class RecipeList extends Component {   
@@ -18,34 +24,37 @@ class RecipeList extends Component {
         this.state={ 
         foods:[],
         loaded: false,
+        fontsLoaded: false,
         }}
 
-    static contextType = NavigationContext;
+    async _loadFontsAsync() {
+      await Font.loadAsync(customFonts);
+      this.setState({ fontsLoaded: true });
+    }
 
     componentDidMount () {
-      this.downloadData();   
+      this.downloadData(); 
+      this._loadFontsAsync(); 
    }
 
    downloadData = async () =>
    {
-     // type 1 click on categories; type 2 search bar
-      const type = this.props.route.params.type;
-      const idCateg = this.props.route.params.id;
+      const categID = this.props.route.params.categID;
 
-      firebase.database().ref('/foods').on('value', (snapshot) =>{
-          let li = [];
+      firebase.database().ref().child('foods').orderByChild('category').equalTo(categID).on('value', (snapshot) =>{
+        let li = [];
           snapshot.forEach((snap) => {
           let item = snap.val();
           item.key = snap.key;
           li.push(item);
       })
-      this.setState({foods:li, loaded: true});
+      this.setState({foods: li, loaded: true});
     })
   }
 
   rednerScreen()
   {
-    if (this.state.loaded)
+    if ((this.state.loaded) && (this.state.foods.length > 0)) 
     {
       return (
           <FlatList 
@@ -57,14 +66,16 @@ class RecipeList extends Component {
             keyExtractor = {(item) => item.key}
           /> 
       )
+    } else if ((this.state.loaded) && (this.state.foods.length === 0))
+    {
+      return (<Text style={styles.emptyText}>Brak przepisów w tej kategorii!</Text>)
     }
     return <Spinner size='large' />
   }
 
   goToRecipe(item)
   {
-    const navigation = this.context;
-    navigation.navigate('Przepis',{item: item});
+    this.props.navigation.navigate('Przepis',{item: item});
 
   }
 
@@ -78,9 +89,12 @@ class RecipeList extends Component {
   }
   
   render() {
+    if (!this.state.fontsLoaded)
+    {
+      return <Spinner size='large' />
+    }
     return (
       <View style={styles.mainView}>
-        <Search />
         {this.rednerScreen()}
       </View>
     );
@@ -90,21 +104,26 @@ class RecipeList extends Component {
   
 const styles = StyleSheet.create({
   mainView: {
-    flex: 1,
     backgroundColor: '#f5f6fa',
     alignItems: 'center',
   },
   TouchList: {
     marginHorizontal: 5,
-    marginBottom: 5,
+    marginTop: 15,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: '#D6D9E8',
-    alignItems: 'center'
   },
   textTitle: {
-    fontFamily: 'sans-serif-light',
-    fontSize: 17,
+    fontFamily: 'Montserrat_300Light',
+    fontSize: 18,
+    marginLeft: 5,
+    marginBottom: 5,
+  },
+  emptyText: {
+    fontFamily: 'Montserrat_300Light',
+    fontSize: 22,
+    marginTop: 20,
   }
 });
 

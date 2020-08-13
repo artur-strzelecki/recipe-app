@@ -131,7 +131,6 @@ class AddRecipe extends Component {
     let user = firebase.auth().currentUser.uid;
     let date = new Date();
     let timestamp = date.getTime();
-    console.log(user,timestamp);
 
     await ref.put(blob,contentT)
     .then (snapshot => {

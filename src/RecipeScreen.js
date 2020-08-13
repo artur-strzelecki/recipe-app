@@ -1,18 +1,15 @@
 import React, {Component, useRef} from 'react';
-import { StyleSheet, Text,TouchableOpacity, View,Dimensions, Image } from 'react-native';
+import { StyleSheet, Text, View,Dimensions, Image } from 'react-native';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
-import { NavigationContext } from '@react-navigation/native';
 import * as Animatable  from 'react-native-animatable';
 import Spinner from '../components/Spinner';
-import {
-    useFonts,
-    Montserrat_300Light,
-  } from '@expo-google-fonts/montserrat';
+import {useFonts,Montserrat_300Light,Montserrat_500Medium } from '@expo-google-fonts/montserrat';
+import { MaterialIcons } from '@expo/vector-icons'; 
 
 
 const RecipeScreen = ({route}) => {
     let [fontsLoaded] = useFonts({
-        Montserrat_300Light ,
+        Montserrat_300Light , Montserrat_500Medium
       });
     const item = route.params.item;
     const titleRef = useRef(null);
@@ -35,14 +32,28 @@ const RecipeScreen = ({route}) => {
             </Animatable.View>)}  
 
         renderHeader={() => (<Image source={{uri: item.url}} style={{ height: 220, width: Dimensions.get('window').width }} />)}
-      >
-        <TriggeringView style={{height: 1000}}
+    >
+        <TriggeringView style={styles.ScrollView}
             onBeginHidden={() => titleRef.current.fadeInUp(200)}
-            onDisplay={() => titleRef.current.fadeOut(100)}
-        >
-            <Text>Scroll Me!</Text>
+            onDisplay={() => titleRef.current.fadeOut(100)}>
+
+            <View style={styles.headerView}>
+                <Text style={styles.headerText}> Składniki </Text>
+                <MaterialIcons name="favorite-border" size={27} color="black" />
+            </View>
+            <View style={styles.contentView}>
+                <Text style={styles.contentText}>{item.ingredients}</Text>
+            </View>
+            <View style={styles.headerView}>
+                <Text style={styles.headerText}> Przygotowanie </Text>
+            </View>
+            <View style={styles.contentView}>
+                <Text style={styles.contentText}>{item.content}</Text>
+            </View>
+
         </TriggeringView>
-      </HeaderImageScrollView>
+    </HeaderImageScrollView>
+
     );
 }
 
@@ -65,7 +76,31 @@ const styles = StyleSheet.create({
         fontSize: 30,
         backgroundColor: 'transparent',
         fontFamily: 'Montserrat_300Light',
-    }
+    },
+    ScrollView: {
+        paddingTop: 5,
+    },
+    headerText: {
+        paddingBottom: 10,
+        fontSize: 18,
+        fontFamily: 'Montserrat_500Medium',
+    },
+    contentText: {
+        fontSize: 18,
+        fontFamily: 'Montserrat_300Light',
+    },
+    headerView: {
+        paddingHorizontal: 5,
+        borderBottomWidth:1, 
+        borderColor: '#cccccc',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    contentView: {
+        paddingTop: 3,
+        paddingLeft: 5,
+        paddingBottom: 15,
+    },   
   });
 
 export default RecipeScreen;
