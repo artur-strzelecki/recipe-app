@@ -18,7 +18,8 @@ import {
     ADD_CONTENT,
     ADD_RESET,
     ADD_CATEGORIES,
-    ADD_PHOTO } from './types';
+    ADD_PHOTO,
+    ADD_TIME } from './types';
 import firebase from 'firebase';
 import {Keyboard } from 'react-native';
 
@@ -150,6 +151,13 @@ export const AddCategories = (text) => {
 export const AddPhoto = (text) => {
     return {
         type: ADD_PHOTO,
+        payload: text,
+    };
+};
+
+export const AddTime = (text) => {
+    return {
+        type: ADD_TIME,
         payload: text,
     };
 };

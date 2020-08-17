@@ -28,3 +28,4 @@ export const ADD_CONTENT = 'add_content';
 export const ADD_RESET = 'add_reset';
 export const ADD_CATEGORIES = 'add_categories';
 export const ADD_PHOTO = 'add_photo';
+export const ADD_TIME = 'add_time';

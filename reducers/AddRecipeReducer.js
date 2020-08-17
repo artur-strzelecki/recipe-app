@@ -4,13 +4,15 @@ import {
     ADD_CONTENT,
     ADD_RESET,
     ADD_CATEGORIES,
-    ADD_PHOTO} from '../actions/types';
+    ADD_PHOTO,
+    ADD_TIME} from '../actions/types';
 const START_STATE = { 
     title: '', 
     ingredients: '', 
     content: '',
     categories: '',
     photo: '',
+    time: '',
 };
 
 export default function AddRecipeReducer (state = START_STATE, action) {
@@ -22,11 +24,13 @@ export default function AddRecipeReducer (state = START_STATE, action) {
         case ADD_CONTENT:
             return {...state, content: action.payload};
         case ADD_RESET:
-                return {...state, title: '', ingredients: '', content: '', photo: '', categories: '1'}; 
+                return {...state, title: '', ingredients: '', content: '', photo: '', categories: '1', time: ''}; 
         case ADD_CATEGORIES:
             return {...state, categories: action.payload};  
         case ADD_PHOTO:
-            return {...state, photo: action.payload};                                                                        
+            return {...state, photo: action.payload};  
+        case ADD_TIME:
+            return {...state, time: action.payload};                                                                                       
         default:
             return state;
     }

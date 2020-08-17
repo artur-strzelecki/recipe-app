@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text,TextInput,TouchableOpacity,ScrollView, Image, Picker } from 'react-native';
+import { StyleSheet, Text,TextInput,TouchableOpacity,ScrollView, Image, Picker,View } from 'react-native';
 import firebase from 'firebase';
 import { Ionicons } from '@expo/vector-icons'; 
-import {AddTitle,AddIngredients,AddContent,AddReset,AddCategories,AddPhoto} from '../actions/actions';
+import {AddTitle,AddIngredients,AddContent,AddReset,AddCategories,AddPhoto,AddTime} from '../actions/actions';
 import {connect} from 'react-redux';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
@@ -15,6 +15,7 @@ const mapStateToProps = state => {
       content: state.AddRecipeReducer.content,
       categories: state.AddRecipeReducer.categories,
       photo: state.AddRecipeReducer.photo,
+      time: state.AddRecipeReducer.time,
   };
 };
 
@@ -24,7 +25,8 @@ class AddRecipe extends Component {
   state = { error_title: '', 
             error_ingredients: '', 
             error_content: '',
-            error_photo: '', 
+            error_photo: '',
+            errot_time: '',
           };
 
   componentDidMount() {
@@ -88,10 +90,14 @@ class AddRecipe extends Component {
     this.props.AddContent(text);
   }
 
+  onChangeTime(text)
+  {
+    this.props.AddTime(text);
+  }
+
   Add()
   { 
-    const{title,ingredients,content,categories,photo} = this.props;
-    const{error_title,error_ingredients,error_content,error_photo} = this.state; // errors
+    const{title,ingredients,content,categories,photo,time} = this.props;
 
     if (title === '')
     {
@@ -109,15 +115,19 @@ class AddRecipe extends Component {
     {
       this.setState({error_photo: 'Nie dodano zdjęcia!'});
     }
+    if (time === '')
+    {
+      this.setState({error_time: 'Nie uzupełniono!'})
+    }
 
     // categories default 1
-    if ((title !== '') && (ingredients !== '') && (content !== '') && (photo !== ''))
+    if ((title !== '') && (ingredients !== '') && (content !== '') && (photo !== '') && (time !== ''))
     {
-      this.addDataFire(title,ingredients,content,photo,categories);
+      this.addDataFire(title,ingredients,content,photo,categories,time);
     }
   }
 
-  addDataFire = async (title,ingredients,content,photo,categories) =>
+  addDataFire = async (title,ingredients,content,photo,categories,time) =>
   {
     // catch key push
     let myRef = firebase.database().ref('/foods').push();
@@ -145,6 +155,7 @@ class AddRecipe extends Component {
         url: downloadUrl,
         user: user,
         createdAt: timestamp,
+        time: time,
         }
         this.props.AddReset(); // reset values
         myRef.set(newData);
@@ -171,20 +182,31 @@ class AddRecipe extends Component {
           {this.reloadPhoto()}
         </TouchableOpacity>
         <Text style={styles.error}>{this.state.error_photo}</Text>
-
-        <Text style = {{fontSize: 17, color: '#485460', }}>Kategoria</Text>
-        <Picker
-        selectedValue={this.props.categories}
-        style={{ height: 50, width: 170, marginBottom: 10, marginLeft: -7, }}
-        onValueChange={(itemValue, itemIndex) => this.props.AddCategories(itemValue)}>
-        <Picker.Item label="Pizza" value="1" />
-        <Picker.Item label="Włoskie" value="2" />
-        <Picker.Item label="Burger" value="3" />
-        <Picker.Item label="Chińskie" value="4" />
-        <Picker.Item label="Sushi" value="5" />
-        <Picker.Item label="Amerykańskie" value="6" />
-      </Picker>
-
+        <View style={{flexDirection: 'row'}}>
+            <View>
+              <Text style = {{fontSize: 17, color: '#485460', }}>Kategoria</Text>
+              <Picker
+                selectedValue={this.props.categories}
+                style={{ height: 50, width: 170, marginBottom: 10, marginLeft: -7, }}
+                onValueChange={(itemValue, itemIndex) => this.props.AddCategories(itemValue)}>
+                <Picker.Item label="Pizza" value="1" />
+                <Picker.Item label="Włoskie" value="2" />
+                <Picker.Item label="Burger" value="3" />
+                <Picker.Item label="Chińskie" value="4" />
+                <Picker.Item label="Sushi" value="5" />
+                <Picker.Item label="Amerykańskie" value="6" />
+              </Picker>
+            </View>
+            <View>
+              <Text style = {{fontSize: 17, color: '#485460', paddingBottom: 5, }}>Czas przygotowania(min)</Text>
+              <TextInput style = {styles.TextInput}
+                keyboardType= "numeric"
+                value = {this.props.time}
+                onChangeText = {this.onChangeTime.bind(this)}>
+              </TextInput>
+              <Text style={styles.error}>{this.state.error_time}</Text>
+            </View>
+        </View>
         <Text style = {styles.textStyle}>Składniki</Text>  
           <TextInput style = {styles.TextInputArea}
             value = {this.props.ingredients}
@@ -266,4 +288,4 @@ const styles = StyleSheet.create({
 
   });
   
-  export default connect(mapStateToProps, {AddTitle,AddIngredients,AddContent,AddReset,AddCategories,AddPhoto}) (AddRecipe);
+  export default connect(mapStateToProps, {AddTitle,AddIngredients,AddContent,AddReset,AddCategories,AddPhoto,AddTime}) (AddRecipe);
