@@ -27,7 +27,7 @@ class RecipeList extends Component {
         fontsLoaded: false,
         }}
 
-    async _loadFontsAsync() {
+    _loadFontsAsync = async () => {
       await Font.loadAsync(customFonts);
       this.setState({ fontsLoaded: true });
     }
