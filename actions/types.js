@@ -29,3 +29,8 @@ export const ADD_RESET = 'add_reset';
 export const ADD_CATEGORIES = 'add_categories';
 export const ADD_PHOTO = 'add_photo';
 export const ADD_TIME = 'add_time';
+
+// add to favourite
+export const ADD_FAVOURITE = 'add_favourite';
+export const DELETE_FAVOURITE = 'delete_favourite';
+export const RESET_FAVOURITE = 'reset_favourite';

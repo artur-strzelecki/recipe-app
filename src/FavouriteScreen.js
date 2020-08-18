@@ -4,6 +4,14 @@ import firebase from 'firebase';
 import Spinner from '../components/Spinner';
 import {Montserrat_300Light,} from '@expo-google-fonts/montserrat';
 import * as Font from 'expo-font';
+import {connect} from 'react-redux';
+import {ResetFav} from '../actions/actions';
+
+const mapStateToProps = state => {
+  return {
+      changeFav: state.FavReducer.changeFav,
+  };
+};
 
 let customFonts = {
   Montserrat_300Light
@@ -17,27 +25,34 @@ class Favourite extends Component {
     loaded: false,
     fontsLoaded: false,
     isMounted: true,
+    update: false,
     }}
 
-    _loadFontsAsync = async () => 
+    _loadFontsAsync = async () =>
     {
         await Font.loadAsync(customFonts);
         this.setState({ fontsLoaded: true });
     }  
  
-    componentDidUpdate () 
+    componentDidMount () 
     {
-      this.setState({isMounted: true});
       this._loadFontsAsync();
-      this.downloadData();
+      this.downloadData(); 
+    }
+
+   async componentDidUpdate()
+   {
+     console.log(this.props.changeFav);
+     if (this.props.changeFav !== null)
+     {
+       this.setState({loaded: false,foods: []});
+       this.updateData();
+       console.log('change');
+     }
    }
 
-   componentWillUnmount() {
-    this.setState({isMounted: false});
-  }
-
-   downloadData = async () =>
-   {
+   updateData = async () =>
+   {   
       let user = firebase.auth().currentUser.uid;
       let li = [];
       firebase.database().ref().child(`favourite/${user}/`).on('value', (snapshot) =>{
@@ -46,15 +61,32 @@ class Favourite extends Component {
             snapshot.forEach((snapItem) => {
               let item = snapItem.val();
               item.key = snapItem.key;
-              li.push(item);          
+              li.push(item);      
             }) 
-            if (this.state.isMounted)
-            {
-              this.setState({foods: li, loaded: true});  
-            }
+            this.setState({foods: li});
         })
       })
-      //this.setState({foods: li, loaded: true}); 
+      this.props.ResetFav(); 
+      this.setState({loaded: true});
+    })
+  }
+
+   downloadData = async () =>
+   {   
+      let user = firebase.auth().currentUser.uid;
+      let li = [];
+      firebase.database().ref().child(`favourite/${user}/`).on('value', (snapshot) =>{
+        snapshot.forEach((snap) => {
+          firebase.database().ref().child('foods').orderByKey().equalTo(snap.val().id).on('value', (snapshot) =>{
+            snapshot.forEach((snapItem) => {
+              let item = snapItem.val();
+              item.key = snapItem.key;
+              li.push(item);      
+            }) 
+            this.setState({foods: li});
+        })
+      })
+      this.setState({loaded: true}); 
     })
   }
 
@@ -73,9 +105,9 @@ class Favourite extends Component {
     {
       if (this.state.foods.length === 0)
       {
-        return <Text style={styles.errorText}> Brak ulubionych przepisów!</Text>
+        return  <Text> Brak ulubionych przepisów!</Text> //<Text style={styles.errorText}> Brak ulubionych przepisów!</Text>
       }
-      return (  <FlatList 
+      return ( <FlatList 
         data = {this.state.foods}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
@@ -88,6 +120,10 @@ class Favourite extends Component {
   }
   
   render() {
+    if (this.props.changeFav !== null)
+    {
+      return null;
+    }
     if (!this.state.fontsLoaded)
     {
       return <Spinner size='large' />
@@ -114,4 +150,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Favourite;
+export default connect(mapStateToProps, {ResetFav}) (Favourite);

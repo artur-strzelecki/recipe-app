@@ -19,7 +19,10 @@ import {
     ADD_RESET,
     ADD_CATEGORIES,
     ADD_PHOTO,
-    ADD_TIME } from './types';
+    ADD_TIME,
+    ADD_FAVOURITE,
+    DELETE_FAVOURITE,
+    RESET_FAVOURITE} from './types';
 import firebase from 'firebase';
 import {Keyboard } from 'react-native';
 
@@ -166,6 +169,26 @@ export const AddReset = () => {
     return {
         type: ADD_RESET,
     };
+};
+
+//favourite
+
+export const AddFav = () => {
+    return {
+        type: ADD_FAVOURITE,
+    };    
+};
+
+export const DelFav = () => {
+    return {
+        type: DELETE_FAVOURITE,
+    };    
+};
+
+export const ResetFav = () => {
+    return {
+        type: RESET_FAVOURITE,
+    };    
 };
 
 

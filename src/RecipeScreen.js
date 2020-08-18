@@ -7,7 +7,14 @@ import {Montserrat_300Light,Montserrat_500Medium } from '@expo-google-fonts/mont
 import { MaterialIcons } from '@expo/vector-icons'; 
 import * as Font from 'expo-font';
 import firebase from 'firebase';
+import {AddFav, DelFav} from '../actions/actions';
+import {connect} from 'react-redux';
 
+const mapStateToProps = state => {
+    return {
+        changeFav: state.FavReducer.changeFav,
+    };
+};
 
 let customFonts = {
     Montserrat_300Light,Montserrat_500Medium
@@ -62,6 +69,7 @@ class RecipeScreen extends Component {
                 id: item.key,
             }
             myRef.set(data);
+            this.props.AddFav();
         }
         else // delete fav
         {
@@ -71,6 +79,8 @@ class RecipeScreen extends Component {
 
             myRef.remove()
             .then(() => this.setState({fav: false}));
+
+            this.props.DelFav();
         }
 
         
@@ -195,5 +205,6 @@ const styles = StyleSheet.create({
     },     
   });
 
-export default RecipeScreen;
+  export default connect(mapStateToProps, {AddFav, DelFav}) (RecipeScreen);
+
 

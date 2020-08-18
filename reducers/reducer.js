@@ -3,7 +3,8 @@ import AuthReducer from './AuthReducer';
 import LoginReducer from './LoginReducer';
 import SearchReducer from './SearchReducer';
 import AddRecipeReducer from './AddRecipeReducer';
+import FavReducer from './FavReducer';
 
 export default combineReducers({
- AuthReducer,LoginReducer,SearchReducer,AddRecipeReducer,
+ AuthReducer,LoginReducer,SearchReducer,AddRecipeReducer,FavReducer
 });
