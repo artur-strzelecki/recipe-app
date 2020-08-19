@@ -42,7 +42,7 @@ class RecipeList extends Component {
       const categID = this.props.route.params.categID;
 
       firebase.database().ref().child('foods').orderByChild('category').equalTo(categID).on('value', (snapshot) =>{
-        let li = [];
+          let li = [];
           snapshot.forEach((snap) => {
           let item = snap.val();
           item.key = snap.key;
@@ -76,7 +76,6 @@ class RecipeList extends Component {
   goToRecipe(item)
   {
     this.props.navigation.navigate('Przepis',{item: item});
-
   }
 
    _renderItem ({item})  { 

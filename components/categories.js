@@ -30,3 +30,21 @@ export const DATA = [
     img: require('../photo/american.jpg'), 
   },
 ];
+
+export const RECOMMENDED = [
+  {
+    id: "1",
+    title: "Pizza",
+    img: require('../photo/pizza2.jpg'), 
+  },
+  {
+    id: "2",
+    title: "Burger",
+    img: require('../photo/burger.jpg'), 
+  },
+  {
+    id: "3",
+    title: "Amerykańskie",
+    img: require('../photo/american.jpg'), 
+  },
+];

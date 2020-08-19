@@ -16,7 +16,7 @@ import RecipeScreen from './RecipeScreen';
 
 const HomeStack = createStackNavigator();
 
-function StackHomeScreen() {
+function StackHomeScreen({route}) {
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen name="Główna" component={HomeScreen} options={{
@@ -25,6 +25,17 @@ function StackHomeScreen() {
           headerTitleAlign: 'center',  
           headerTintColor: '#485460',            
         }} />
+      <HomeStack.Screen name="Lista przepisów" component={RecipeList} options={({ route }) => ({ 
+        title: route.params.title,
+        headerStyle: { backgroundColor: '#f5f6fa', height: Platform.OS === 'ios' ? 80 : 59 },
+        headerTitleStyle: { fontSize: 18, },
+        headerTitleAlign: 'center',  
+        headerTintColor: '#485460',  
+        })}/>    
+      <HomeStack.Screen name="Przepis" component={RecipeScreen} options={{
+        headerTransparent: true,
+        headerTitle: false,
+        }}/>  
     </HomeStack.Navigator>
   );
 }
@@ -63,7 +74,6 @@ function StackRecipeScreen({navigation: {navigate}, route}) {
         headerTransparent: true,
         headerTitle: false,
         }}/>            
-
     </RecipeStack.Navigator>
   );
 }
@@ -120,7 +130,7 @@ function MyTabs () {
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="chef-hat" color={color} size={size + 5} /> ),
           }}/>
-          <Tab.Screen name="InputTextScreen" component={StackFavScreen} 
+          <Tab.Screen name="FavouriteScreen" component={StackFavScreen} 
           options={{
             tabBarLabel: ({focused}) => 
             {switch (focused) {case true: return <Text style = {styles.label}>Settings</Text>; case false: return null}},

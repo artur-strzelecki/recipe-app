@@ -42,12 +42,10 @@ class Favourite extends Component {
 
    async componentDidUpdate()
    {
-     console.log(this.props.changeFav);
      if (this.props.changeFav !== null)
      {
        this.setState({loaded: false,foods: []});
        this.updateData();
-       console.log('change');
      }
    }
 
@@ -55,40 +53,52 @@ class Favourite extends Component {
    {   
       let user = firebase.auth().currentUser.uid;
       let li = [];
-      firebase.database().ref().child(`favourite/${user}/`).on('value', (snapshot) =>{
-        snapshot.forEach((snap) => {
-          firebase.database().ref().child('foods').orderByKey().equalTo(snap.val().id).on('value', (snapshot) =>{
-            snapshot.forEach((snapItem) => {
-              let item = snapItem.val();
-              item.key = snapItem.key;
-              li.push(item);      
-            }) 
-            this.setState({foods: li});
-        })
-      })
       this.props.ResetFav(); 
-      this.setState({loaded: true});
+      firebase.database().ref().child(`favourite/${user}/`).on('value', (snapshot) =>{
+        let check = snapshot.exists();
+        if (check)
+        {
+            snapshot.forEach((snap) => {
+              firebase.database().ref().child('foods').orderByKey().equalTo(snap.val().id).on('value', (snapshot) =>{
+                snapshot.forEach((snapItem) => {
+                  let item = snapItem.val();
+                  item.key = snapItem.key;
+                  li.push(item);      
+                }) 
+                this.setState({foods: li, loaded: true});
+            })
+          })
+        } else
+        {
+          this.setState({loaded: true});
+        }
     })
   }
 
-   downloadData = async () =>
-   {   
-      let user = firebase.auth().currentUser.uid;
-      let li = [];
-      firebase.database().ref().child(`favourite/${user}/`).on('value', (snapshot) =>{
-        snapshot.forEach((snap) => {
-          firebase.database().ref().child('foods').orderByKey().equalTo(snap.val().id).on('value', (snapshot) =>{
-            snapshot.forEach((snapItem) => {
-              let item = snapItem.val();
-              item.key = snapItem.key;
-              li.push(item);      
-            }) 
-            this.setState({foods: li});
-        })
-      })
-      this.setState({loaded: true}); 
-    })
-  }
+  downloadData = async () =>
+  {   
+     let user = firebase.auth().currentUser.uid;
+     let li = [];
+     firebase.database().ref().child(`favourite/${user}/`).on('value', (snapshot) =>{
+       let check = snapshot.exists();
+       if (check)
+       {      
+            snapshot.forEach((snap) => {
+              firebase.database().ref().child('foods').orderByKey().equalTo(snap.val().id).on('value', (snapshot) =>{
+                snapshot.forEach((snapItem) => {
+                  let item = snapItem.val();
+                  item.key = snapItem.key;
+                  li.push(item);      
+                }) 
+                this.setState({foods: li, loaded: true});
+            })
+          })
+       } else
+       {
+        this.setState({loaded: true}); 
+       } 
+   })
+ }
 
    _renderItem ({item})  { 
     return (
@@ -105,7 +115,7 @@ class Favourite extends Component {
     {
       if (this.state.foods.length === 0)
       {
-        return  <Text> Brak ulubionych przepisów!</Text> //<Text style={styles.errorText}> Brak ulubionych przepisów!</Text>
+        return  <Text style={styles.errorText}> Brak ulubionych przepisów!</Text> //<Text style={styles.errorText}> Brak ulubionych przepisów!</Text>
       }
       return ( <FlatList 
         data = {this.state.foods}
