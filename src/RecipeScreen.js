@@ -4,11 +4,12 @@ import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header
 import * as Animatable  from 'react-native-animatable';
 import Spinner from '../components/Spinner';
 import {Montserrat_300Light,Montserrat_500Medium } from '@expo-google-fonts/montserrat';
-import { MaterialIcons } from '@expo/vector-icons'; 
+import { MaterialIcons,Entypo,Fontisto,MaterialCommunityIcons } from '@expo/vector-icons'; 
 import * as Font from 'expo-font';
 import firebase from 'firebase';
 import {AddFav, DelFav} from '../actions/actions';
 import {connect} from 'react-redux';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const mapStateToProps = state => {
     return {
@@ -24,7 +25,7 @@ class RecipeScreen extends Component {
     constructor(props) {
         super(props);
         this.titleRef = React.createRef();
-        this.state={fontsLoaded: false, fav: false, loaded: false, mainKey: ''};
+        this.state={fontsLoaded: false, fav: false, loaded: false, mainKey: null };
       }
 
     _loadFontsAsync = async () => 
@@ -35,52 +36,65 @@ class RecipeScreen extends Component {
 
     componentDidMount()
     {
-        this._loadFontsAsync();    
+        this._loadFontsAsync();   
         this.checkFav();    
-    }    
+    } 
 
     checkFav = async () =>
     {
         const item = this.props.route.params.item;
         let user = firebase.auth().currentUser.uid;
         firebase.database().ref().child(`/favourite/${user}`).orderByChild('id').equalTo(item.key).on('value', (snapshot) =>{   
-            let fav, key;           
-            snapshot.forEach((snap) => {
-                fav = snap.val().id;
-                key = snap.key;
-            })
+            let check,mainKey;
+            check = snapshot.exists();
 
-            if (item.key === fav)
+            if (check)
             {
-               this.setState({fav: true, mainKey: key});
-            }
-            this.setState({loaded: true});
+                snapshot.forEach((snapItem) => {
+                    mainKey = snapItem.key;
+                    })
+
+                this.setState({fav: true, loaded: true, mainKey: mainKey});
+            } else 
+            {
+                this.setState({loaded: true});
+            }           
         })
     }
 
-    AddFav()
+    ThenAddFav(key)
+    {
+        this.setState({fav: true, mainKey: key});
+    }
+
+    ThenDelFav()
+    {
+        this.setState({fav: false, mainKey: null});  
+    }
+
+    AddFav = async () =>
     {
         const item = this.props.route.params.item;
         let user = firebase.auth().currentUser.uid;
         if (!this.state.fav)
         {
+            this.props.AddFav();
             let myRef = firebase.database().ref(`/favourite/${user}`).push();
+            let key = myRef.key;
             const data = {
                 id: item.key,
             }
-            myRef.set(data);
-            this.props.AddFav();
+            myRef.set(data).then(() => this.ThenAddFav(key));
+
         }
         else // delete fav
         {
+            this.props.DelFav();  
             const {mainKey} = this.state;
-
             let myRef = firebase.database().ref(`/favourite/${user}/${mainKey}`);
 
             myRef.remove()
-            .then(() => this.setState({fav: false}));
-
-            this.props.DelFav();
+            .then(() => this.ThenDelFav());
         }
 
         
@@ -97,6 +111,7 @@ class RecipeScreen extends Component {
             return <MaterialIcons name="favorite" onPress={() => this.AddFav()} size={27} color="#485460" />
         }
     }
+    
 
     render()
     {
@@ -109,6 +124,7 @@ class RecipeScreen extends Component {
         return (
             <HeaderImageScrollView
             maxHeight={220}
+            ScrollViewComponent={ScrollView}
             minHeight={80}
             renderForeground={() => (
                 <View style={styles.titleView}>
@@ -122,28 +138,39 @@ class RecipeScreen extends Component {
     
             renderHeader={() => (<Image source={{uri: item.url}} style={{ height: 220, width: Dimensions.get('window').width }} />)}
         >
-            <TriggeringView style={styles.ScrollView}
-                onBeginHidden={() => this.titleRef.current.fadeInUp(200)}
-                onDisplay={() => this.titleRef.current.fadeOut(100)}>
+            <ScrollView style={styles.ScrollView}
+                  onScroll={event => { 
+                    console.log(event.nativeEvent.contentOffset.y + 'on');
+                  }}
+                onScrollBeginDrag={event => { 
+                    console.log(event.nativeEvent.contentOffset.y + 'begin');
+                  }}
+                onScrollEndDrag={event => { 
+                    console.log(event.nativeEvent.contentOffset.y + 'end');
+                  }} >
+
     
                 <View style={styles.timeView}>
-                    <Text style={styles.headerText}> Czas przygotowania(min): {item.content} </Text>
+                    <Entypo name="time-slot" size={22} style={{marginTop: 2,}} color="black" />
+                    <Text style={styles.headerText}> Czas: {item.content} min</Text>
                     {this.renderIcon()}
                 </View>
                 <View style={styles.headerView}>
+                    <Fontisto name="prescription" size={22} color="black" />
                     <Text style={styles.headerText}> Składniki </Text>
                 </View>
                 <View style={styles.contentView}>
                     <Text style={styles.contentText}>{item.ingredients}</Text>
                 </View>
                 <View style={styles.headerView}>
+                    <MaterialCommunityIcons name="silverware-fork-knife" size={22} color="black" />
                     <Text style={styles.headerText}> Przygotowanie </Text>
                 </View>
                 <View style={styles.contentView}>
                     <Text style={styles.contentText}>{item.content}</Text>
                 </View>
     
-            </TriggeringView>
+            </ScrollView>
         </HeaderImageScrollView>  
         );
     }  
@@ -176,6 +203,7 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         fontSize: 18,
         fontFamily: 'Montserrat_500Medium',
+        
     },
     contentText: {
         fontSize: 18,
@@ -183,10 +211,13 @@ const styles = StyleSheet.create({
     },
     headerView: {
         paddingHorizontal: 5,
+        paddingTop: 10,
         borderBottomWidth:1, 
+        borderTopWidth: 1,
         borderColor: '#cccccc',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
+
     },
     contentView: {
         paddingTop: 3,
@@ -196,13 +227,21 @@ const styles = StyleSheet.create({
     timeView: {
         paddingLeft: 5,
         paddingRight: 10,
-        borderBottomWidth:1, 
-        borderColor: 'black',
+      //  borderBottomWidth:1, 
+      // borderColor: '#cccccc',
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 10,
+      //  justifyContent: 'space-between',
+      justifyContent: 'center'
 
-    },     
+
+    },      
+    test: {
+        borderRadius: 30,
+        backgroundColor: 'red',
+        position: 'absolute',
+
+
+    },  
   });
 
   export default connect(mapStateToProps, {AddFav, DelFav}) (RecipeScreen);

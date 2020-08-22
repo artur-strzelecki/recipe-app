@@ -6,6 +6,7 @@ import {Montserrat_300Light,} from '@expo-google-fonts/montserrat';
 import * as Font from 'expo-font';
 import {connect} from 'react-redux';
 import {ResetFav} from '../actions/actions';
+import {ListItem} from 'react-native-elements';
 
 const mapStateToProps = state => {
   return {
@@ -24,9 +25,10 @@ class Favourite extends Component {
     foods:[],
     loaded: false,
     fontsLoaded: false,
-    isMounted: true,
     update: false,
     }}
+
+    _isMounted = false;
 
     _loadFontsAsync = async () =>
     {
@@ -36,41 +38,51 @@ class Favourite extends Component {
  
     componentDidMount () 
     {
+      console.log('mount')
+      this._isMounted = true;
       this._loadFontsAsync();
-      this.downloadData(); 
+      this.downloadData();         
     }
 
-   async componentDidUpdate()
+    componentDidUpdate ()
    {
-     if (this.props.changeFav !== null)
+     if (this._isMounted)
      {
-       this.setState({loaded: false,foods: []});
-       this.updateData();
+        if (this.props.changeFav !== null)
+        { 
+          console.log('update')
+        //  this.setState({loaded: false});
+        //  if (!this.state.loaded)
+        //  {
+            this.updateData();            
+        //  }      
+        }
      }
    }
 
    updateData = async () =>
    {   
       let user = firebase.auth().currentUser.uid;
-      let li = [];
-      this.props.ResetFav(); 
       firebase.database().ref().child(`favourite/${user}/`).on('value', (snapshot) =>{
         let check = snapshot.exists();
+        let li = [];
         if (check)
-        {
+        {  
             snapshot.forEach((snap) => {
-              firebase.database().ref().child('foods').orderByKey().equalTo(snap.val().id).on('value', (snapshot) =>{
-                snapshot.forEach((snapItem) => {
+              firebase.database().ref().child('foods').orderByKey().equalTo(snap.val().id).on('value', (snapshot2) =>{
+                snapshot2.forEach((snapItem) => {
                   let item = snapItem.val();
                   item.key = snapItem.key;
-                  li.push(item);      
+                  li.push(item);    
                 }) 
-                this.setState({foods: li, loaded: true});
             })
           })
+          this.setState({foods: li, loaded: true});
+          this.props.ResetFav();
         } else
         {
-          this.setState({loaded: true});
+          this.setState({foods: [], loaded: true});
+          this.props.ResetFav(); 
         }
     })
   }
@@ -79,20 +91,20 @@ class Favourite extends Component {
   {   
      let user = firebase.auth().currentUser.uid;
      let li = [];
-     firebase.database().ref().child(`favourite/${user}/`).on('value', (snapshot) =>{
+      firebase.database().ref().child(`favourite/${user}/`).on('value', (snapshot) =>{
        let check = snapshot.exists();
        if (check)
        {      
             snapshot.forEach((snap) => {
-              firebase.database().ref().child('foods').orderByKey().equalTo(snap.val().id).on('value', (snapshot) =>{
-                snapshot.forEach((snapItem) => {
+               firebase.database().ref().child('foods').orderByKey().equalTo(snap.val().id).on('value', (snapshot2) =>{
+                snapshot2.forEach((snapItem) => {
                   let item = snapItem.val();
                   item.key = snapItem.key;
-                  li.push(item);      
+                  li.push(item); 
                 }) 
-                this.setState({foods: li, loaded: true});
             })
           })
+          this.setState({foods: li,loaded: true});
        } else
        {
         this.setState({loaded: true}); 
@@ -100,12 +112,28 @@ class Favourite extends Component {
    })
  }
 
+ goToRecipe(item)
+ {
+   this.props.navigation.navigate('Przepis',{item: item});
+ }
+
    _renderItem ({item})  { 
     return (
-      <TouchableOpacity>
+    /*  <TouchableOpacity>
       <Image style={{height: 200, width: 200,resizeMode: 'contain'}} source={{uri:item.url}}/>
         <Text> {item.title}</Text>
-      </TouchableOpacity>
+      </TouchableOpacity>*/
+      <View style={{borderBottomWidth: 0.8, borderColor: '#cccccc'}}>
+        <ListItem
+        title={item.title}
+        onPress={() => this.goToRecipe(item)}
+        titleStyle={{fontSize: 23, fontFamily: 'Montserrat_300Light' }}
+      // leftAvatar={{ source: { uri: item.url } }}
+        leftElement={<Image style={{height: 70, width: 90, borderRadius: 7,}} source={{uri:item.url}}/>}
+      //  bottomDivider
+        chevron
+        />
+      </View>  
       )
   }
 
@@ -121,7 +149,6 @@ class Favourite extends Component {
         data = {this.state.foods}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        numColumns={2}
         renderItem = {({item})=> this._renderItem({item})}
         keyExtractor = {(item) => item.key}
       /> )
@@ -130,6 +157,7 @@ class Favourite extends Component {
   }
   
   render() {
+
     if (this.props.changeFav !== null)
     {
       return null;

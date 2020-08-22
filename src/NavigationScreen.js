@@ -89,6 +89,10 @@ function StackFavScreen() {
           headerTitleAlign: 'center',
           headerTintColor: '#485460',     
         }}/>
+        <FavStack.Screen name="Przepis" component={RecipeScreen} options={{
+          headerTransparent: true,
+          headerTitle: false,
+        }}/>       
     </FavStack.Navigator>
   );
 }

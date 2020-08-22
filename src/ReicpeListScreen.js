@@ -33,9 +33,17 @@ class RecipeList extends Component {
     }
 
     componentDidMount () {
+      console.log('mount list')
       this.downloadData(); 
       this._loadFontsAsync(); 
    }
+
+   componentWillUnmount()
+   {
+     console.log('unmouynt list')
+   }
+
+   
 
    downloadData = async () =>
    {
