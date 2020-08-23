@@ -22,7 +22,8 @@ import {
     ADD_TIME,
     ADD_FAVOURITE,
     DELETE_FAVOURITE,
-    RESET_FAVOURITE} from './types';
+    RESET_FAVOURITE,
+    ADD_SUBMIT} from './types';
 import firebase from 'firebase';
 import {Keyboard } from 'react-native';
 
@@ -171,6 +172,13 @@ export const AddReset = () => {
     };
 };
 
+export const AddSubmit = (type) => {
+    return {
+        type: ADD_SUBMIT,
+        payload: type,
+    };
+};
+
 //favourite
 
 export const AddFav = () => {
@@ -186,7 +194,7 @@ export const DelFav = () => {
 };
 
 export const ResetFav = () => {
-    return {
+    return  {
         type: RESET_FAVOURITE,
     };    
 };

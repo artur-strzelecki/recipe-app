@@ -1,17 +1,17 @@
 import React,{Component} from 'react';
-import { StyleSheet, Text, View,TouchableOpacity,FlatList, Image,ScrollView, SafeAreaView } from 'react-native';
-import firebase from 'firebase';
+import { StyleSheet, Text, View,TouchableOpacity,FlatList,ScrollView, SafeAreaView } from 'react-native';
 import Spinner from '../components/Spinner';
 import { connect } from 'react-redux';
-import {
-  Montserrat_300Light,
-} from '@expo-google-fonts/montserrat';
+import {Montserrat_300Light,} from '@expo-google-fonts/montserrat';
 import * as Font from 'expo-font';
+import {listData} from '../actions/actionsData';
+import {Image} from 'react-native-elements';
 
 const mapStateToProps = state => {
-    return {
-        search: state.SearchReducer.search,
-    };
+  return {
+    dataList: state.DataReducer.dataList,
+    loadedList: state.DataReducer.loadedList,
+  };
 };
 
 let customFonts = {
@@ -22,8 +22,6 @@ class RecipeList extends Component {
     constructor(props){
         super(props);
         this.state={ 
-        foods:[],
-        loaded: false,
         fontsLoaded: false,
         }}
 
@@ -33,40 +31,18 @@ class RecipeList extends Component {
     }
 
     componentDidMount () {
-      console.log('mount list')
-      this.downloadData(); 
-      this._loadFontsAsync(); 
-   }
-
-   componentWillUnmount()
-   {
-     console.log('unmouynt list')
-   }
-
-   
-
-   downloadData = async () =>
-   {
       const categID = this.props.route.params.categID;
-
-      firebase.database().ref().child('foods').orderByChild('category').equalTo(categID).on('value', (snapshot) =>{
-          let li = [];
-          snapshot.forEach((snap) => {
-          let item = snap.val();
-          item.key = snap.key;
-          li.push(item);
-      })
-      this.setState({foods: li, loaded: true});
-    })
-  }
+      this._loadFontsAsync(); 
+      this.props.listData(categID);
+   }
 
   rednerScreen()
   {
-    if ((this.state.loaded) && (this.state.foods.length > 0)) 
+    if ((this.props.loadedList) && (this.props.dataList.length > 0)) 
     {
       return (
           <FlatList 
-            data = {this.state.foods}
+            data = {this.props.dataList}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             numColumns={2}
@@ -74,7 +50,7 @@ class RecipeList extends Component {
             keyExtractor = {(item) => item.key}
           /> 
       )
-    } else if ((this.state.loaded) && (this.state.foods.length === 0))
+    } else if ((this.props.loadedList) && (this.props.dataList.length === 0))
     {
       return (<Text style={styles.emptyText}>Brak przepisów w tej kategorii!</Text>)
     }
@@ -134,4 +110,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default connect(mapStateToProps,null) (RecipeList);
+export default connect(mapStateToProps,{listData}) (RecipeList);

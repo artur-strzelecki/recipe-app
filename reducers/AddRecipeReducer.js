@@ -5,7 +5,8 @@ import {
     ADD_RESET,
     ADD_CATEGORIES,
     ADD_PHOTO,
-    ADD_TIME} from '../actions/types';
+    ADD_TIME,
+    ADD_SUBMIT} from '../actions/types';
 const START_STATE = { 
     title: '', 
     ingredients: '', 
@@ -13,6 +14,8 @@ const START_STATE = {
     categories: '',
     photo: '',
     time: '',
+    submit: false,
+    opacity: 1,
 };
 
 export default function AddRecipeReducer (state = START_STATE, action) {
@@ -30,7 +33,18 @@ export default function AddRecipeReducer (state = START_STATE, action) {
         case ADD_PHOTO:
             return {...state, photo: action.payload};  
         case ADD_TIME:
-            return {...state, time: action.payload};                                                                                       
+            return {...state, time: action.payload}; 
+        case ADD_SUBMIT:
+            let opa;
+            if (action.payload === true)
+            {
+                opa = 0.2;
+            }
+            else 
+            {
+                opa = 1;
+            }
+            return {...state, submit: action.payload, opacity: opa};                                                                                                  
         default:
             return state;
     }

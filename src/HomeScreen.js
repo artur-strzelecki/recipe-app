@@ -5,38 +5,33 @@ import { Montserrat_300Light,Montserrat_500Medium} from '@expo-google-fonts/mont
 import * as Font from 'expo-font';
 import Spinner from '../components/Spinner';
 import {RECOMMENDED} from '../components/categories';
+import {homeData} from '../actions/actionsData';
+import {connect} from 'react-redux';
 
 let customFonts = {
   Montserrat_300Light,Montserrat_500Medium
 };
+
+const mapStateToProps = state => {
+  return {
+    dataHome: state.DataReducer.dataHome,
+    loadedHome: state.DataReducer.loadedHome,
+  };
+};
+
 
 class HomeScreen extends Component {
   constructor(props){
     super(props);
     this.state={ 
       fontsLoaded: false,
-      foods: [],
-      loaded: false,
     }}
   
   componentDidMount()
   {
     this._loadFontsAsync();
-    this.downloadData();
+    this.props.homeData();
   }  
-
-  downloadData = async () =>
-  {
-      firebase.database().ref().child('foods').orderByChild('createdAt').limitToLast(5).on('value', (snapshot) =>{
-          let li = [];
-          snapshot.forEach((snap) => {
-          let item = snap.val();
-          item.key = snap.key;
-          li.push(item);
-      })
-      this.setState({foods: li, loaded: true});
-    })
-  }
 
   _loadFontsAsync = async () => 
   {
@@ -78,7 +73,7 @@ class HomeScreen extends Component {
 
   renderScreen()
   {
-    if (this.state.loaded)
+    if (this.props.loadedHome)
     {
       return (
         <View>
@@ -86,7 +81,7 @@ class HomeScreen extends Component {
           <Text style={styles.lastAddText}> Ostatnio dodane przepisy:</Text>   
           <FlatList 
             horizontal = {true}
-            data = {this.state.foods}
+            data = {this.props.dataHome}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             renderItem = {({item})=> this._renderItemRecipe({item})}
@@ -165,4 +160,4 @@ const styles = StyleSheet.create({
   }, 
 });
   
-export default HomeScreen;
+export default connect(mapStateToProps, {homeData}) (HomeScreen);

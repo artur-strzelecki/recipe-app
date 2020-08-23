@@ -1,12 +1,13 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import { StyleSheet, Text,TextInput,TouchableOpacity,ScrollView, Image, Picker,View } from 'react-native';
 import firebase from 'firebase';
 import { Ionicons } from '@expo/vector-icons'; 
-import {AddTitle,AddIngredients,AddContent,AddReset,AddCategories,AddPhoto,AddTime} from '../actions/actions';
+import {AddTitle,AddIngredients,AddContent,AddReset,AddCategories,AddPhoto,AddTime,AddSubmit} from '../actions/actions';
 import {connect} from 'react-redux';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
-
+import Spinner from '../components/Spinner';
+import {Overlay} from 'react-native-elements';
 
 const mapStateToProps = state => {
   return {
@@ -16,9 +17,10 @@ const mapStateToProps = state => {
       categories: state.AddRecipeReducer.categories,
       photo: state.AddRecipeReducer.photo,
       time: state.AddRecipeReducer.time,
+      submit: state.AddRecipeReducer.submit,
+      opacity: state.AddRecipeReducer.opacity,
   };
 };
-
 
 class AddRecipe extends Component {
   // errors state
@@ -28,7 +30,7 @@ class AddRecipe extends Component {
             error_photo: '',
             errot_time: '',
           };
-
+        
   componentDidMount() {
     this.getPermissionAsync();
     this.props.AddReset();
@@ -92,6 +94,7 @@ class AddRecipe extends Component {
 
   onChangeTime(text)
   {
+    this.setState({error_time: ''});
     this.props.AddTime(text);
   }
 
@@ -123,6 +126,7 @@ class AddRecipe extends Component {
     // categories default 1
     if ((title !== '') && (ingredients !== '') && (content !== '') && (photo !== '') && (time !== ''))
     {
+      this.props.AddSubmit(true);
       this.addDataFire(title,ingredients,content,photo,categories,time);
     }
   }
@@ -157,8 +161,7 @@ class AddRecipe extends Component {
         createdAt: timestamp,
         time: time,
         }
-        this.props.AddReset(); // reset values
-        myRef.set(newData);
+        myRef.set(newData).then(() => this.endSubmit());
     })
     .catch(error => {
       alert("Nie udało się dodać przepisu. Spróbuj ponowanie poźniej");
@@ -167,10 +170,20 @@ class AddRecipe extends Component {
     return null; 
   }
 
+  endSubmit()
+  {
+    this.props.AddSubmit(false);
+    this.props.AddReset();
+    alert('Dodano przpis!');
+  }
+
   render () {
+    let styles = StyleSheetFactory.getSheet(this.props.opacity);
   return (
       <ScrollView style={styles.mainView} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-
+        <Overlay isVisible={this.props.submit} overlayStyle={{height: 80, width: 80, borderRadius: 5, paddingBottom: 30,}}>
+            <Spinner size='large' />           
+        </Overlay>
         <Text style = {styles.textStyle}>Nazwa</Text>
         <TextInput style = {styles.TextInput}
             value = {this.props.title}
@@ -214,7 +227,6 @@ class AddRecipe extends Component {
             numberOfLines = {3}
             onChangeText = {this.onChangeIngredients.bind(this)} />
         <Text style={styles.error}>{this.state.error_ingredients}</Text>
-
         <Text style = {styles.textStyle}>Przygotowanie</Text>  
           <TextInput style = {styles.TextInputArea}
             value = {this.props.content}
@@ -222,70 +234,78 @@ class AddRecipe extends Component {
           />
           <Text style={styles.error}>{this.state.error_content}</Text>
 
-        <TouchableOpacity style={styles.submit} onPress={this.Add.bind(this)}>
+        <TouchableOpacity style={styles.submit} onPress={this.Add.bind(this)}> 
                 <Text style={styles.submitText} >DODAJ</Text>
-        </TouchableOpacity>      
+        </TouchableOpacity>     
       </ScrollView>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  mainView: { 
-      backgroundColor:'#f5f6fa',
-      flex: 1,
-      paddingTop: 10,
-      paddingLeft: 15,
-      paddingRight: 15,
+class StyleSheetFactory {
+  static getSheet(opacity) {
+      return StyleSheet.create({
+        mainView: { 
+          backgroundColor:'#f5f6fa',
+          flex: 1,
+          paddingTop: 10,
+          paddingLeft: 15,
+          paddingRight: 15,
+          opacity: opacity,
+        },
+      textStyle: {
+        paddingBottom: 10,
+        fontSize: 17,
+        color: '#485460',   
+      },
+      TextInput: {
+          paddingLeft: 5,
+          height: 40,
+          fontSize: 15,
+          borderRadius: 5,
+          backgroundColor: '#81ecec',
+      },
+      TextInputArea: {
+        textAlignVertical: 'top',
+        paddingLeft: 5,
+        height: 180,
+        fontSize: 18,
+        borderRadius: 5,
+        backgroundColor: '#81ecec',
     },
-  textStyle: {
-    paddingBottom: 10,
-    fontSize: 17,
-    color: '#485460',   
-  },
-  TextInput: {
-      paddingLeft: 5,
-      height: 40,
-      fontSize: 15,
-      borderRadius: 5,
-      backgroundColor: '#81ecec',
-  },
-  TextInputArea: {
-    textAlignVertical: 'top',
-    paddingLeft: 5,
-    height: 180,
-    fontSize: 18,
-    borderRadius: 5,
-    backgroundColor: '#81ecec',
-},
-  photo: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 160,
-    width: 160,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: '#485460',
-    },
-  error: {
-    color: 'red',
-    fontSize: 14,
-    marginBottom: 10,
-  },
-  submit: {
-    padding: 15,
-    marginBottom: 30,
-    marginTop: 10,
-    borderRadius: 10,
-    backgroundColor: '#FF6347',
-    alignItems: 'center'
-  },
-  submitText: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-
-  });
+      photo: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 160,
+        width: 160,
+        borderWidth: 1,
+        borderRadius: 5,
+        borderColor: '#485460',
+        },
+      error: {
+        color: 'red',
+        fontSize: 14,
+        marginBottom: 10,
+      },
+      submit: {
+        padding: 15,
+        marginBottom: 30,
+        marginTop: 10,
+        borderRadius: 10,
+        backgroundColor: '#FF6347',
+        alignItems: 'center'
+      },
+      submitText: {
+        fontSize: 17,
+        fontWeight: 'bold',
+        color: 'white',
+      },
+      ovverView: {
+        backgroundColor: 'transparent',
+      },
+    
+      })
+  }
+}
   
-  export default connect(mapStateToProps, {AddTitle,AddIngredients,AddContent,AddReset,AddCategories,AddPhoto,AddTime}) (AddRecipe);
+  export default connect(mapStateToProps, {AddTitle,AddIngredients,AddContent,AddReset,AddCategories,AddPhoto,AddTime,AddSubmit}) (AddRecipe);

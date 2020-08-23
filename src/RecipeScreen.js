@@ -7,7 +7,7 @@ import {Montserrat_300Light,Montserrat_500Medium } from '@expo-google-fonts/mont
 import { MaterialIcons,Entypo,Fontisto,MaterialCommunityIcons } from '@expo/vector-icons'; 
 import * as Font from 'expo-font';
 import firebase from 'firebase';
-import {AddFav, DelFav} from '../actions/actions';
+import {AddFav, DelFav,ResetFav} from '../actions/actions';
 import {connect} from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -64,21 +64,22 @@ class RecipeScreen extends Component {
 
     ThenAddFav(key)
     {
+        this.props.AddFav();  
         this.setState({fav: true, mainKey: key});
     }
 
     ThenDelFav()
     {
+        this.props.DelFav();  
         this.setState({fav: false, mainKey: null});  
     }
 
-    AddFav = async () =>
+    AddFav()
     {
         const item = this.props.route.params.item;
         let user = firebase.auth().currentUser.uid;
         if (!this.state.fav)
         {
-            this.props.AddFav();
             let myRef = firebase.database().ref(`/favourite/${user}`).push();
             let key = myRef.key;
             const data = {
@@ -89,7 +90,6 @@ class RecipeScreen extends Component {
         }
         else // delete fav
         {
-            this.props.DelFav();  
             const {mainKey} = this.state;
             let myRef = firebase.database().ref(`/favourite/${user}/${mainKey}`);
 
@@ -244,6 +244,6 @@ const styles = StyleSheet.create({
     },  
   });
 
-  export default connect(mapStateToProps, {AddFav, DelFav}) (RecipeScreen);
+  export default connect(mapStateToProps, {AddFav, DelFav,ResetFav}) (RecipeScreen);
 
 
