@@ -98,7 +98,7 @@ class LoginScreen extends Component  {
                 onChangeText = {this.onChangePassword.bind(this)}
                 />
             </View>
-            <Text> {this.props.error}</Text>
+            <Text style={{textAlign: 'center'}}> {this.props.error}</Text>
             <View style = {styles.buttons}>
                 {this.signInButton()}
                 {this.createAccount()}

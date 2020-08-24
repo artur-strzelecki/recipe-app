@@ -2,7 +2,7 @@ import React,{Component} from 'react';
 import { StyleSheet, Text, View,TouchableOpacity,FlatList,ScrollView, SafeAreaView } from 'react-native';
 import Spinner from '../components/Spinner';
 import { connect } from 'react-redux';
-import {Montserrat_300Light,} from '@expo-google-fonts/montserrat';
+import {Montserrat_300Light, Montserrat_600SemiBold, Montserrat_700Bold} from '@expo-google-fonts/montserrat';
 import * as Font from 'expo-font';
 import {listData} from '../actions/actionsData';
 import {Image} from 'react-native-elements';
@@ -15,7 +15,7 @@ const mapStateToProps = state => {
 };
 
 let customFonts = {
-  Montserrat_300Light
+  Montserrat_300Light,Montserrat_600SemiBold,Montserrat_700Bold
 };
 
 class RecipeList extends Component {   
@@ -66,7 +66,7 @@ class RecipeList extends Component {
     return (
       <TouchableOpacity style = {styles.TouchList} onPress={() => this.goToRecipe(item)}>
       <Image style={{height: 140, width: 180, borderRadius: 8,}} source={{uri:item.url}}/>
-        <Text style={styles.textTitle}> {item.title}</Text>
+        <View style={styles.viewText}><Text style={styles.textTitle}> {item.title}</Text></View>
       </TouchableOpacity>
       )
   }
@@ -94,20 +94,28 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     marginTop: 15,
     borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#D6D9E8',
+    alignItems: 'center',
+    justifyContent: 'center',
+  //  borderWidth: 2,
+  //  borderColor: '#D6D9E8',
+  backgroundColor: '#ecf0f1'
   },
   textTitle: {
-    fontFamily: 'Montserrat_300Light',
-    fontSize: 18,
-    marginLeft: 5,
-    marginBottom: 5,
+    fontFamily: 'Montserrat_700Bold',
+    fontSize: 19,
+    color: 'white',
   },
   emptyText: {
     fontFamily: 'Montserrat_300Light',
     fontSize: 22,
     marginTop: 20,
-  }
+  },
+  viewText: {
+    position: 'absolute',
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center'
+  }, 
 });
 
 export default connect(mapStateToProps,{listData}) (RecipeList);

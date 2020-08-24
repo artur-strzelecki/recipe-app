@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View,Dimensions, Image } from 'react-native';
+import { StyleSheet, Text, View,Dimensions, Image, ScrollView,TouchableOpacity } from 'react-native';
 import HeaderImageScrollView, { TriggeringView } from 'react-native-image-header-scroll-view';
 import * as Animatable  from 'react-native-animatable';
 import Spinner from '../components/Spinner';
@@ -9,7 +9,6 @@ import * as Font from 'expo-font';
 import firebase from 'firebase';
 import {AddFav, DelFav,ResetFav} from '../actions/actions';
 import {connect} from 'react-redux';
-import { ScrollView } from 'react-native-gesture-handler';
 
 const mapStateToProps = state => {
     return {
@@ -104,11 +103,11 @@ class RecipeScreen extends Component {
     {
         if (!this.state.fav)
         {
-            return <MaterialIcons name="favorite-border" onPress={() => this.AddFav()} size={27} color='black'/>
+            return <MaterialIcons name="favorite-border" size={27} color='black'/>
         }
         else // if favourite
         {
-            return <MaterialIcons name="favorite" onPress={() => this.AddFav()} size={27} color="#485460" />
+            return <MaterialIcons name="favorite" size={27} color="#485460" />
         }
     }
     
@@ -124,7 +123,6 @@ class RecipeScreen extends Component {
         return (
             <HeaderImageScrollView
             maxHeight={220}
-            ScrollViewComponent={ScrollView}
             minHeight={80}
             renderForeground={() => (
                 <View style={styles.titleView}>
@@ -134,26 +132,19 @@ class RecipeScreen extends Component {
             renderFixedForeground={() => (
                 <Animatable.View style={styles.animatedTitle} ref={this.titleRef}>
                     <Text style={styles.titleText}>{item.title}</Text>
-                </Animatable.View>)}  
+                </Animatable.View>)} 
     
             renderHeader={() => (<Image source={{uri: item.url}} style={{ height: 220, width: Dimensions.get('window').width }} />)}
-        >
-            <ScrollView style={styles.ScrollView}
-                  onScroll={event => { 
-                    console.log(event.nativeEvent.contentOffset.y + 'on');
-                  }}
-                onScrollBeginDrag={event => { 
-                    console.log(event.nativeEvent.contentOffset.y + 'begin');
-                  }}
-                onScrollEndDrag={event => { 
-                    console.log(event.nativeEvent.contentOffset.y + 'end');
-                  }} >
-
-    
+        >   
+            <TriggeringView style={styles.ScrollView}
+                onBeginHidden={() => this.titleRef.current.fadeInUp(200)}
+                onDisplay={() => this.titleRef.current.fadeOut(100)}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}>        
+                
                 <View style={styles.timeView}>
-                    <Entypo name="time-slot" size={22} style={{marginTop: 2,}} color="black" />
-                    <Text style={styles.headerText}> Czas: {item.content} min</Text>
-                    {this.renderIcon()}
+                    <Entypo  name="time-slot" size={22} style={{marginTop: 2,}} color="black" />
+                    <Text style={styles.headerText}> Czas: {item.time} min</Text>                       
                 </View>
                 <View style={styles.headerView}>
                     <Fontisto name="prescription" size={22} color="black" />
@@ -170,16 +161,24 @@ class RecipeScreen extends Component {
                     <Text style={styles.contentText}>{item.content}</Text>
                 </View>
     
-            </ScrollView>
-        </HeaderImageScrollView>  
+            </TriggeringView>
+            <TouchableOpacity style={styles.fav} onPressIn={() => this.AddFav()}>
+                {this.renderIcon()}
+            </TouchableOpacity>
+        </HeaderImageScrollView>   
         );
     }  
 }
 
+
+
 const styles = StyleSheet.create({
+    mainView: {
+        flex: 1,
+    },
     titleView: {
         flex: 1,
-        alignSelf: 'stretch',
+        //alignSelf: 'stretch',
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -187,7 +186,7 @@ const styles = StyleSheet.create({
         height: 80,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 16,
+        paddingTop: 25,
         opacity: 0,
     },
     titleText: {
@@ -229,19 +228,15 @@ const styles = StyleSheet.create({
         paddingRight: 10,
       //  borderBottomWidth:1, 
       // borderColor: '#cccccc',
-        flexDirection: 'row',
       //  justifyContent: 'space-between',
-      justifyContent: 'center'
-
-
-    },      
-    test: {
-        borderRadius: 30,
-        backgroundColor: 'red',
-        position: 'absolute',
-
-
+      justifyContent: 'center',
+      flexDirection: 'row',
     },  
+    fav: {
+        top: 5,
+        right: 8,
+        position: 'absolute',       
+    }, 
   });
 
   export default connect(mapStateToProps, {AddFav, DelFav,ResetFav}) (RecipeScreen);

@@ -224,12 +224,12 @@ class AddRecipe extends Component {
           <TextInput style = {styles.TextInputArea}
             value = {this.props.ingredients}
             multiline = {true}
-            numberOfLines = {3}
             onChangeText = {this.onChangeIngredients.bind(this)} />
         <Text style={styles.error}>{this.state.error_ingredients}</Text>
         <Text style = {styles.textStyle}>Przygotowanie</Text>  
           <TextInput style = {styles.TextInputArea}
             value = {this.props.content}
+            multiline = {true}
             onChangeText = {this.onChangeContent.bind(this)}
           />
           <Text style={styles.error}>{this.state.error_content}</Text>

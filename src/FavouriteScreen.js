@@ -64,6 +64,7 @@ class Favourite extends Component {
       <View style={{borderBottomWidth: 0.8, borderColor: '#cccccc'}}>
         <ListItem
         title={item.title}
+        containerStyle={{backgroundColor: '#ecf0f1'}}
         onPress={() => this.goToRecipe(item)}
         titleStyle={{fontSize: 23, fontFamily: 'Montserrat_300Light' }}
         leftElement={<Image style={{height: 70, width: 90, borderRadius: 7,}} source={{uri:item.url}}/>}

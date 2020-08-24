@@ -35,6 +35,7 @@ function StackHomeScreen({route}) {
       <HomeStack.Screen name="Przepis" component={RecipeScreen} options={{
         headerTransparent: true,
         headerTitle: false,
+        headerTintColor: '#485460', 
         }}/>  
     </HomeStack.Navigator>
   );
@@ -70,9 +71,10 @@ function StackRecipeScreen({navigation: {navigate}, route}) {
         headerTitleAlign: 'center',  
         headerTintColor: '#485460',  
         })}/>    
-      <RecipeStack.Screen name="Przepis" component={RecipeScreen} options={{
+      <RecipeStack.Screen name="Przepis" component={RecipeScreen} options={{       
         headerTransparent: true,
         headerTitle: false,
+        headerTintColor: '#485460', 
         }}/>            
     </RecipeStack.Navigator>
   );
@@ -92,6 +94,7 @@ function StackFavScreen() {
         <FavStack.Screen name="Przepis" component={RecipeScreen} options={{
           headerTransparent: true,
           headerTitle: false,
+          headerTintColor: '#485460', 
         }}/>       
     </FavStack.Navigator>
   );
