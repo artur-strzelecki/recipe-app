@@ -1,5 +1,5 @@
 # Recipe-app
-App with recipes added by user. 
+App with recipes added by users. 
 
 ## Table of contents
 * [Built with](#Built-with)
